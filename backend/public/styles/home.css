@@ -1,0 +1,104 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.main-body {
+  height: 100vh;
+  overflow-y: scroll; /* Enables scrolling */
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
+
+.main-body::-webkit-scrollbar {
+  width: 0px; /* Hides scrollbar in Chrome, Safari, Edge */
+  display: none;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff; /* Adjust background to avoid transparency */
+  z-index: 1000; /* Ensures it's above other content */
+  display: flex;
+  /* justify-content: space-between; */
+  background-color: aqua;
+  height: 3em;
+  width: 100%;
+  gap: 30%;
+  padding: 0.5vw;
+}
+
+h3 {
+  font-size: 1.5vw;
+}
+
+.options {
+  padding-top: 5px;
+  display: flex;
+  gap: 20%;
+  list-style: none;
+  width: 50vw;
+  font-size: 1.3vw;
+}
+
+.user {
+  display: flex;
+  list-style: none;
+  gap: 10%;
+  font-size: 1.3vw;
+  margin-right: 2vw;
+}
+
+.user li {
+  height: 1.4em;
+  width: 4em;
+  border: 2px solid black;
+  border-radius: 8px;
+  text-align: center;
+}
+
+a {
+  width: 2em;
+  text-decoration: none;
+  color: inherit;
+}
+
+.user li:hover {
+  background-color: rgb(32, 179, 25);
+  color: white;
+}
+
+.options li:hover {
+  text-decoration: underline;
+}
+.diary-image {
+  margin-top: 10px;
+  width: 60vw;
+  margin-left: 20%;
+}
+
+hr {
+  margin-top: 2em;
+  width: 80vw;
+  text-align: center;
+}
+
+.content1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.content1 h1 {
+  font-size: 50px;
+}
+
+.content1 p {
+  font-size: 30px;
+  padding: 0em 5em 0em 5em;
+}

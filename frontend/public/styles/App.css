@@ -1,0 +1,163 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 👈 Prevent horizontal scroll */
+  overflow-y: hidden;
+  background-image: url("../images/26669.jpg");
+  /* background-color: #f9f8f5; */
+}
+
+.app-layout {
+  min-height: 100vh;
+  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+/* Header */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  height: 60px;
+  background: linear-gradient(to right, #4a90e2, #007bff);
+  border-bottom: 2px solid #005bb5;
+  border-radius: 0 0 12px 12px;
+  z-index: 1000;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: "Open Sans", sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.main-header ul {
+  list-style: none;
+  display: flex;
+  gap: 10rem;
+  margin: 0;
+  padding: 0;
+}
+
+.redirect {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  font-size: 1.3rem;
+}
+
+.redirect:hover {
+  /* text-decoration: underline; */
+  color: black;
+  transform: scale(1.05);
+}
+
+/* Full container */
+.full-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px; /* header offset */
+  overflow: hidden;
+}
+
+/* Entry creator */
+/* .create-entry {
+  margin: 0.2em 0;
+} */
+
+/* Scrollable container for entries */
+.entries-scroll-container {
+  max-height: calc(90vh - 60px - 40px); /* header + footer height */
+  overflow-y: auto;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); */
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 10px;
+  padding: 10px 0;
+  background-color: #e0c4c4;
+  flex-shrink: 0;
+}
+
+.home-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); */
+}
+
+/* .left-panel {
+  width: 60%;
+  height: 90%;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+} */
+
+/* .left-panel {
+  width: 50%;
+  height: 90%;
+  padding: 1.5rem;
+  background-color: #7fffd4; /* or whatever background your EntryCard uses */
+
+.right-panel {
+  width: 40%;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); */
+}
+
+.vertical-line {
+  width: 2px;
+  background-color: rgb(106, 102, 102);
+  flex-shrink: 0;
+  margin: 1em 0.2rem 0 5rem;
+}
+
+.home {
+  padding: 5px;
+  height: 40px;
+  margin-top: 20em;
+  /* background-color: green; */
+  /* border-radius: 8px solid black; */
+}
+
+.greet {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1.5em;
+}
+
+.Fav {
+  margin-top: 100px;
+}

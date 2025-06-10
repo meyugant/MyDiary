@@ -1,0 +1,113 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background-color: rgb(224, 198, 198);
+}
+
+.card {
+  background: linear-gradient(to bottom right, #f0c3da, #f8e1f4);
+  margin-left: 3em;
+  margin-top: 1em;
+  padding: 2em;
+  /* margin-bottom: 40px; */
+  height: 75vh;
+  width: 50vw;
+  /* border: 1px solid rgb(41, 64, 177); */
+  border-radius: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.input-box {
+  height: 15%;
+  width: 90%;
+  padding: 0 1em 0 1em;
+  font-size: 1em;
+  text-align: center;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  border-radius: 5px;
+}
+
+.content-box {
+  display: flex;
+  padding: 1em;
+  justify-content: flex-start;
+  transition: border-color 0.3s;
+  align-items: flex-start;
+  font-size: 1.2em;
+  text-align: left;
+  height: 70%;
+  width: 90%;
+  resize: none;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.card input:focus,
+.card textarea:focus {
+  border-color: #bb77c5;
+  outline: none;
+}
+
+.date-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* .btn {
+  height: 30px;
+  width: 50px;
+  border-radius: 4px;
+  background-color: rgb(12, 162, 12);
+  margin-left: 84%;
+} */
+
+.id {
+  width: 60px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  text-align: center;
+}
+
+/* styling from external sources */
+/* From Uiverse.io by kamehame-ha */
+/* From Uiverse.io by levxyca */
+.addbtn {
+  background-color: #6a5acd;
+  color: white;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  float: right;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 85%;
+}
+
+.addbtn:hover {
+  background-color: #5946b2;
+  text-decoration: underline;
+}
+
+button:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}

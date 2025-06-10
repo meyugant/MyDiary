@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: rgb(232, 177, 235);
+}
+
+#homebox {
+  margin: 220px 100px 100px 600px;
+  width: 400px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(202, 242, 242);
+  border-radius: 10px;
+  border: 2px solid aqua;
+}
+
+#btns {
+  display: flex;
+  gap: 18px;
+}
+
+h1 {
+  color: red;
+}

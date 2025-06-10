@@ -1,0 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#main-heading {
+  margin-top: 3em;
+  font-size: 4em;
+  text-align: center;
+}
+
+#content {
+  font-size: 2em;
+  /* width: 70%;
+  text-align: center; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-size: 1.5rem; /* optional: adjust for better readability */
+  line-height: 1.5;
+}
+
+#contact-info {
+  margin-top: 26vh;
+}
+
+/*------------------------------------*/
