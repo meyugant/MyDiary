@@ -438,37 +438,46 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL:`${process.env.API_BASE_URL}/auth/google/mydiary`,
+      callbackURL: `${process.env.API_BASE_URL}/auth/google/mydiary`,
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        // console.log(profile);
+        const email = profile.emails?.[0]?.value;
+        if (!email) {
+          console.error("No email returned from Google profile.");
+          return cb(new Error("No email found in Google profile"));
+        }
+
         const result = await db.query(
-          "SELECT * FROM userdata WHERE username= $1",
-          [profile.email]
+          "SELECT * FROM userdata WHERE username = $1",
+          [email]
         );
+
         if (result.rows.length === 0) {
           const diaryUsername = profile.displayName
             .toLowerCase()
-            .replace(/\s+/g, "_"); // just an example
+            .replace(/\s+/g, "_");
+
           const newUser = await db.query(
-            "INSERT INTO userdata (username, password_hash,  diary_name) VALUES ($1, $2, $3) RETURNING *",
-            [profile.email, "googleSignUp", profile.displayName]
+            "INSERT INTO userdata (username, password_hash, diary_name) VALUES ($1, $2, $3) RETURNING *",
+            [email, "googleSignUp", profile.displayName]
           );
 
-          console.log(newUser.rows[0]);
-          cb(null, newUser.rows[0]);
+          console.log("New user created via Google:", newUser.rows[0]);
+          return cb(null, newUser.rows[0]);
         } else {
-          cb(null, result.rows[0]);
+          console.log("Existing Google user logged in:", result.rows[0]);
+          return cb(null, result.rows[0]);
         }
       } catch (err) {
-        console.log("Google Strategy Error:", err);
-        cb(err);
+        console.error("Google Strategy Error:", err);
+        return cb(err);
       }
     }
   )
 );
+
 
 passport.serializeUser((user, cb) => {
   cb(null, user.id); // just store user ID
