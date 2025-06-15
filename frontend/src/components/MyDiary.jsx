@@ -14,8 +14,8 @@ function IntroPage() {
           My<span>Diary</span>
         </h1>
         <div className="intro-auth-buttons">
-          <button onClick={() => navigate("/MyDiary/login")}>Login</button>
-          <button onClick={() => navigate("/MyDiary/register")}>
+          <button onClick={() => navigate("/login")}>Login</button>
+          <button onClick={() => navigate("/register")}>
             Register
           </button>
         </div>
@@ -33,7 +33,7 @@ function IntroPage() {
           </p>
         </div>
         <img
-          src="/MyDiary/images/MyDiary-main.jpg"
+          src="/images/MyDiary-main.jpg"
           alt="Writing in diary"
           className="intro-image"
         />
@@ -48,7 +48,7 @@ function IntroPage() {
         </div>
         <div className="feature">
           <img
-            src="/MyDiary/images/self-reflection.jpg"
+            src="/images/self-reflection.jpg"
             alt="Self reflection"
           />
           <h3>Self Reflection</h3>
@@ -56,7 +56,7 @@ function IntroPage() {
         </div>
         <div className="feature">
           <img
-            src="/MyDiary/images/beautiful-ui.webp"
+            src="/images/beautiful-ui.webp"
             alt="Consistent journaling"
           />
           <h3>Consistency</h3>
