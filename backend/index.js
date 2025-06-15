@@ -50,8 +50,9 @@ db.connect();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
-  cors({
+  cors({[
     origin: "http://localhost:5173",
+        "https://mydiary.vercel.app",]
     methods: "GET,POST,DELETE,PUT",
     credentials: true, // important for cookies/session
   })
