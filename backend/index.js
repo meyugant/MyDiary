@@ -253,7 +253,7 @@ app.post("/register", async (req, res, next) => {
   }
 
   const response = await db.query("SELECT * FROM userdata WHERE username=$1", [
-    email,
+    diary_username,
   ]);
   if (response.rows.length > 0) {
     res.status(409).json({ message: "User Already existed!!" });
