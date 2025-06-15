@@ -74,12 +74,15 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      sameSite: "none",            // 🚨 required for cross-origin cookies
+      secure: true                 // 🚨 required for HTTPS (Vercel)
     },
   })
 );
+
 app.use("/uploads", express.static("uploads"));
 
 app.use(passport.initialize());
