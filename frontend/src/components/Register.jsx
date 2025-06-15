@@ -23,7 +23,7 @@ export default function Register() {
       );
       console.log(res);
 
-      window.location.href = "/MyDiary/home";
+      window.location.href = "/home";
     } catch (err) {
       alert("User already exists!!");
       console.log(err.response?.data);
@@ -83,7 +83,7 @@ export default function Register() {
         </button>
 
         <p className="switch-form">
-          Already have an account? <Link to="/MyDiary/login">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </form>
     </div>
