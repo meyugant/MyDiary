@@ -42,7 +42,7 @@ function IntroPage() {
       {/* Features Section */}
       <div className="intro-features">
         <div className="feature">
-          <img src="/MyDiary/images/safe-secure.jpg" alt="Safe thoughts" />
+          <img src="/images/safe-secure.jpg" alt="Safe thoughts" />
           <h3>Private & Secure</h3>
           <p>Everything you write stays with you. Your diary, your rules.</p>
         </div>
