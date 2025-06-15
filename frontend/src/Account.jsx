@@ -31,7 +31,7 @@ function UserInfo(props) {
         }
       );
       alert(res.data.message);
-      navigate("/MyDiary/login"); // or homepage
+      navigate("/login"); // or homepage
     } catch (err) {
       console.error("Logout error:", err);
     }
