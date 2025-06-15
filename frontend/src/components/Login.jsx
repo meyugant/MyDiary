@@ -17,7 +17,7 @@ export default function Login() {
         }
       );
       alert("Login successful!");
-      window.location.href = "/MyDiary/home";
+      window.location.href = "/home";
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     }
@@ -60,7 +60,7 @@ export default function Login() {
           Continue with Google
         </button>
         <p className="switch-form">
-          Don't have an account? <Link to="/MyDiary/register">Register</Link>
+          Don't have an account? <Link to="/register">Register</Link>
         </p>
         <p className="forgot-details">
           <Link to="/MyDiary/update">Forgot password or Username ?</Link>
