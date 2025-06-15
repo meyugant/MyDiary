@@ -2,9 +2,11 @@ import "../../public/styles/Login.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios"; // ✅ Don't forget this
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +19,7 @@ export default function Login() {
         }
       );
       alert("Login successful!");
-      window.location.href = "/home";
+      navigate("/home");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     }
