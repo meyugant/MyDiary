@@ -52,7 +52,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({[
     origin: "http://localhost:5173",
-        "https://mydiary.vercel.app",
+        "https://my-diary-neon.vercel.app",
         ],
     methods: "GET,POST,DELETE,PUT",
     credentials: true, // important for cookies/session
