@@ -63,7 +63,7 @@ export default function Login() {
           Don't have an account? <Link to="/register">Register</Link>
         </p>
         <p className="forgot-details">
-          <Link to="/MyDiary/update">Forgot password or Username ?</Link>
+          <Link to="/update">Forgot password or Username ?</Link>
         </p>
       </form>
     </div>
