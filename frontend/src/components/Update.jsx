@@ -25,7 +25,7 @@ function UpdateDetails() {
         }
       );
       console.log(res.message);
-      window.location.href = "/MyDiary/login";
+      window.location.href = "/login";
     } catch (err) {
       console.error("Some error occured :", err);
     }
