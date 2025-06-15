@@ -158,6 +158,45 @@ footer {
   font-size: 1.5em;
 }
 
-.Fav {
-  margin-top: 100px;
+.fav-page {
+  margin-top: 5rem;
+  /* display: flex; */
+}
+
+.fav-list {
+  display: flex;
+  gap: 2em;
+}
+
+/* for fav list */
+.fav-page {
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.fav-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .fav-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .fav-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .fav-list {
+    grid-template-columns: 1fr;
+  }
 }

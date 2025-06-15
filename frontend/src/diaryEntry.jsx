@@ -1,37 +1,36 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import "../public/styles/Note.css";
 import axios from "axios";
 import viewEntry from "./view";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 function Card(props) {
-  console.log(props);
+  // console.log(props);
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+
+  const [liked, setLiked] = useState(props.liked);
+
+  useEffect(() => {
+    setLiked(props.liked);
+  }, [props.liked]);
 
   const handleDelete = async (event) => {
     event.preventDefault();
     const ID = props.entry_id;
     props.onDelete(ID);
-
-    console.log(ID);
-    const url = `http://localhost:3000/api/delete/${ID}`;
-    console.log(url);
-    try {
-      const res = await axios.delete(url);
-      console.log(res);
-      if (res.status == 200) {
-        console.log("Deleted sucessfully!");
-      } else {
-        console.log("There's a problem in deleting the entry!");
-      }
-    } catch (error) {
-      console.error("Error deleting the entry:", error);
-      console.log("An error occured!!");
-    }
   };
 
   async function handleClick(event) {
     event.preventDefault();
     props.viewClick();
   }
+
+  const handleLike = (event) => {
+    event.preventDefault();
+    props.toggleLike(props.entry_id);
+    setLiked(!liked); // use parent's function
+  };
 
   return (
     <form className="note">
@@ -40,6 +39,9 @@ function Card(props) {
       <p>Entry No. {props.page}</p>
       {/* <p>{props.cont}</p> */}
       <div className="btn-box">
+        <button onClick={handleLike} className="like-button">
+          {liked ? <FaHeart color="red" /> : <FaRegHeart />}
+        </button>
         <button onClick={handleDelete} className="delete-btn">
           Delete
         </button>

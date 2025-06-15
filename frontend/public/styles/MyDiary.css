@@ -1,0 +1,145 @@
+.intro-container {
+  font-family: "Segoe UI", sans-serif;
+  padding: 0;
+  margin: 0;
+  background: #f9f9fb;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.intro-navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.intro-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #6d28d9;
+}
+
+.intro-auth-buttons button {
+  margin-left: 1rem;
+}
+
+.intro-hero {
+  width: 97%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 2rem;
+  background: linear-gradient(to right, #e0e7ff, #f3e8ff);
+}
+
+.intro-text {
+  flex: 1;
+  max-width: 600px;
+}
+
+.intro-text h1 {
+  font-size: 2.8rem;
+  color: #4c1d95;
+}
+
+.intro-text p {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.intro-image {
+  flex: 1;
+  max-width: 500px;
+  width: 100%;
+  border-radius: 20px;
+  margin-top: 2rem;
+}
+
+.intro-features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 3rem 1rem;
+  background: #fff;
+}
+
+.feature {
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
+  margin: 1rem;
+  text-align: center;
+}
+
+.feature img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature h3 {
+  margin-top: 1rem;
+  color: #5b21b6;
+}
+
+.feature p {
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.intro-footer {
+  text-align: center;
+  padding: 1rem;
+  background: #ede9fe;
+  color: #6b21a8;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.intro-auth-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin: 1rem;
+}
+
+.intro-auth-buttons button {
+  padding: 8px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #7f5af0, #2cb67d);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.intro-auth-buttons button:hover {
+  background: linear-gradient(135deg, #2cb67d, #7f5af0);
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 600;
+  font-size: 2rem;
+  color: #4a148c;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.logo span {
+  color: #e91e63; /* Soft pink to represent emotion */
+  font-weight: 700;
+}

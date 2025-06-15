@@ -12,6 +12,7 @@
   height: 10vh;
   width: 30vw;
   background: #e6ecff;
+  background: linear-gradient(145deg, #8acde1, #ffffff);
   /* border: 2px solid black; */
   border-left: 6px solid #4a90e2;
   border-radius: 16px;
@@ -95,8 +96,26 @@
   margin-top: 1em;
 }
 
-.note .btn-box button:hover {
+.btn-box .view-btn:hover {
   background-color: #4a90e2;
   color: white;
   transform: scale(1.05);
+}
+
+.btn-box .delete-btn:hover {
+  background-color: #4a90e2;
+  color: white;
+  transform: scale(1.05);
+}
+
+.like-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+}
+
+.like-button:hover {
+  transform: scale(1.2);
 }

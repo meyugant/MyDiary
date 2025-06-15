@@ -17,22 +17,6 @@ function EntryCard(props) {
     }
   }, [props.user_id]);
 
-  // // Fetch user_id from the backend
-  // useEffect(() => {
-  //   async function fetchUserId() {
-  //     try {
-  //       const res = await axios.get("http://localhost:3000/api/user", {
-  //         withCredentials: true, // Ensures cookies/session are sent
-  //       });
-
-  //       setEntry((prev) => ({ ...prev, user_id: res.data.user_id }));
-  //     } catch (error) {
-  //       console.error("Error fetching user_id:", error);
-  //     }
-  //   }
-  //   fetchUserId();
-  // }, []);
-
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -61,14 +45,6 @@ function EntryCard(props) {
     }
 
     try {
-      // const res = await axios.post("http://localhost:3000/api/submit", entry, {
-      //   withCredentials: true, // Ensures cookies/session are sent
-      // });
-      // console.log("Entry saved:", res.data);
-
-      // Notify parent to update UI
-      console.log(entry.dt);
-
       props.onAdd(entry);
 
       // Reset form fields (but keep user_id)

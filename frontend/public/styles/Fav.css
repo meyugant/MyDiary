@@ -1,0 +1,80 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.fav-entry {
+  background-color: aqua;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+  background: linear-gradient(145deg, #8acde1, #ffffff);
+  border: 1px solid #b2ebf2;
+  border-radius: 20px;
+  padding: 1rem;
+  /* width: 300px;
+  height: 150px; */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
+  font-family: "Segoe UI", sans-serif;
+}
+
+.fav-entry h4 {
+  margin: 0;
+  color: #0277bd;
+  font-weight: 600;
+}
+
+.fav-entry p {
+  margin: 4px 0 0;
+  color: #00796b;
+  font-size: 14px;
+}
+
+/* .fav-entry button {
+  align-self: flex-end;
+  padding: 6px 14px;
+  background-color: #00acc1;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.entry-card button:hover {
+  background-color: #00838f;
+} */
+
+.view-btn {
+  width: 4rem;
+  height: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  color: #333;
+  border-radius: 5px;
+  /* margin-top: 1em; */
+  /* margin-left: 30rem; */
+}
+
+.view-btn:hover {
+  background-color: #4a90e2;
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-box {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1em;
+  margin-top: 1em;
+}

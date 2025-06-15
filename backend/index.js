@@ -9,6 +9,15 @@ import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import env from "dotenv";
 import { v4 as uuidv4 } from "uuid";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Ensure uploads directory exists
+const uploadDir = "./uploads";
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 const app = express();
 const port = 3000;
@@ -23,12 +32,30 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Create this folder in your project root
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, req.user.id + "-profile" + ext); // Save with user ID for uniqueness
+  },
+});
+
+const upload = multer({ storage: storage });
+
 db.connect();
 
-app.use(express.static("public"));
+// app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,POST,DELETE,PUT",
+    credentials: true, // important for cookies/session
+  })
+);
 
 app.use(
   session({
@@ -40,28 +67,39 @@ app.use(
     },
   })
 );
+app.use("/uploads", express.static("uploads"));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (req, res) => {
-  res.render("login.ejs");
+app.post("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.status(200).json({ message: "Logged out successfully" });
+    });
+  });
 });
 
-app.get("/register", (req, res) => {
-  res.render("register.ejs");
-});
+// app.get("/", (req, res) => {
+//   res.render("login.ejs");
+// });
 
-app.get("/login", (req, res) => {
-  res.render("login.ejs");
-});
+// app.get("/register", (req, res) => {
+//   res.render("register.ejs");
+// });
+
+// app.get("/login", (req, res) => {
+//   res.render("login.ejs");
+// });
 
 //fetch all entries to be visible to the user....
 app.get("/api/mydiary/:user_id", async (req, res) => {
   const { user_id } = req.params;
   try {
     const result = await db.query(
-      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no FROM diary_entries WHERE user_id=$1 ORDER BY dt DESC, id DESC",
+      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked FROM diary_entries WHERE user_id=$1 ORDER BY dt DESC, id DESC",
       [user_id]
     );
     res.json(result.rows);
@@ -75,9 +113,20 @@ app.get("/mydiary", (req, res) => {
   // console.log(req.isAuthenticated());
 
   if (req.isAuthenticated()) {
-    res.redirect("http://localhost:5173");
+    res.redirect("http://localhost:5173/MyDiary/home");
   } else {
-    res.redirect("/login");
+    res.redirect("/MyDiary/login");
+  }
+});
+
+app.get("/api/get-liked", async (req, res) => {
+  if (req.isAuthenticated()) {
+    const result = await db.query(
+      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked FROM diary_entries WHERE liked=true ORDER BY dt DESC, id DESC"
+    );
+    res.json(result.rows);
+  } else {
+    res.redirect("/MyDiary/login");
   }
 });
 
@@ -92,7 +141,7 @@ app.get(
   "/auth/google/mydiary",
   passport.authenticate("google", {
     successRedirect: "/mydiary",
-    failureRedirect: "/login",
+    failureRedirect: "/MyDiary/login",
   })
 );
 
@@ -124,41 +173,99 @@ app.get("/api/:id", async (req, res) => {
   }
 });
 
-// app.get("/About", (req, res) => {
+app.get("/get-profile/:userid", async (req, res) => {
+  const { userid } = req.params;
+  if (req.isAuthenticated()) {
+    const result = await db.query(
+      "Select id, profile_image From userdata Where id = $1 ",
+      [userid]
+    );
+    res.json(result);
+  } else {
+    console.error("User not authenticated!!");
+  }
+});
 
-// })
+app.post("/upload-image", upload.single("image"), (req, res) => {
+  const imagePath = "/uploads/" + req.file.filename;
+
+  db.query("UPDATE userdata SET profile_image = $1 WHERE id = $2", [
+    imagePath,
+    req.user.id,
+  ])
+    .then(() => {
+      res.json({ message: "Image uploaded successfully", path: imagePath });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: "Database update failed" });
+    });
+});
+
+app.post("/toggle-like", async (req, res) => {
+  // console.log(req.body);
+  const { id } = req.body;
+
+  if (!id) return res.status(400).json({ error: "entryId is required" });
+
+  try {
+    const toggleQuery = `
+      UPDATE diary_entries
+      SET liked = NOT liked
+      WHERE id = $1
+      RETURNING liked;
+    `;
+
+    const result = await db.query(toggleQuery, [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Entry not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      liked: result.rows[0].liked,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.post("/register", async (req, res, next) => {
-  const { username, diary_username, password } = req.body;
-  if (!username || !password || !diary_username) {
+  const { email, display_name, diary_username, password } = req.body;
+  // console.log(req.body);
+  if (!email || !password || !display_name || !diary_username) {
     return res.status(400).send("All fields are required!");
   }
 
   const response = await db.query("SELECT * FROM userdata WHERE username=$1", [
-    username,
+    email,
   ]);
   if (response.rows.length > 0) {
-    res.send("User Already existed!!");
+    res.status(409).json({ message: "User Already existed!!" });
   } else {
     const userId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     try {
       const result = await db.query(
-        "INSERT INTO userdata (id, username, password_hash,diary_name) VALUES ($1, $2, $3,$4) RETURNING *",
-        [userId, username, hashedPassword, diary_username]
+        "INSERT INTO userdata (id, username, password_hash,diary_name,email) VALUES ($1, $2, $3,$4,$5) RETURNING *",
+        [userId, diary_username, hashedPassword, display_name, email]
       );
 
       const newUser = result.rows[0];
       console.log(newUser);
-      console.log(req);
+      // console.log(req);
 
       // Automatically log in the user
       req.login(newUser, (err) => {
         if (err) {
           return next(err);
         }
-        res.render("info.ejs", { name: username });
+        // res.render("info.ejs", { name: username });
+        // res.redirect("http://localhost:5173");
+        res.status(200).json({ message: "Registered", user: newUser });
       });
     } catch (error) {
       console.error("Error registering user:", error);
@@ -167,21 +274,32 @@ app.post("/register", async (req, res, next) => {
   }
 });
 
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/mydiary",
-    failureRedirect: "/login",
-  })
-);
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.error("Passport error:", err);
+      return next(err);
+    }
+    if (!user) {
+      console.warn("Login failed:", info?.message);
+      return res.status(401).json({ message: info?.message || "Login failed" });
+    }
 
-// app.post(
-//   "/register",
-//   passport.authenticate("local", {
-//     successRedirect: "/mydiary",
-//     failureRedirect: "/login",
-//   })
-// );
+    req.login(user, (err) => {
+      if (err) {
+        console.error("Login session error:", err);
+        return next(err);
+      }
+      console.log("Login successful:", user.username);
+      return res.status(200).json({
+        message: "Logged in",
+        user_id: user.id,
+        diary_name: user.diary_name,
+        creation_date: user.created_at,
+      });
+    });
+  })(req, res, next);
+});
 
 app.post("/api/submit", async (req, res) => {
   const { user_id, entry_no, dt, sub, cont } = req.body;
@@ -195,26 +313,69 @@ app.post("/api/submit", async (req, res) => {
     const entryId = uuidv4();
     const utcDate = new Date(dt).toISOString();
     const entry_no_num = Number(entry_no); // Convert entry_no to a number
+    const liked = false;
+    // const date = new Date(utcDate);
+    // const formattedDate = `${date.getUTCFullYear()}-${String(
+    //   date.getUTCMonth() + 1
+    // ).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+    // console.log(formattedDate);
 
     await db.query(
-      "INSERT INTO diary_entries (id, user_id, dt, sub, cont, entry_no) VALUES ($1, $2, $3, $4, $5, $6)",
-      [entryId, user_id, utcDate, sub, cont, entry_no_num]
+      "INSERT INTO diary_entries (id, user_id, dt, sub, cont, entry_no,liked) VALUES ($1, $2, $3, $4, $5,$6,$7)",
+      [entryId, user_id, utcDate, sub, cont, entry_no_num, liked]
     );
 
     res
       .status(201)
-      .json({ id: entryId, user_id, entry_no, utcDate, sub, cont });
+      .json({ entryId, user_id, entry_no, dt: utcDate, sub, cont, liked });
   } catch (error) {
     console.error("Error saving diary entry:", error);
     res.status(500).send("An error occurred while saving the diary entry.");
   }
 });
 
+app.post("/update/recover-username", async (req, res) => {
+  const { email, value } = req.body;
+  const result = await db.query("Select * from userdata WHERE email = $1", [
+    email,
+  ]);
+
+  if (result.rows.length > 0) {
+    await db.query("UPDATE userdata SET username = $1 WHERE email = $2", [
+      value,
+      email,
+    ]);
+    res.status(200).json({ message: "Username updated successfully" });
+  } else {
+    console.log("User not found");
+    res.status(404).json({ message: "User not found!!" });
+  }
+});
+
+app.post("/update/recover-password", async (req, res) => {
+  const { email, value } = req.body;
+
+  const result = await db.query("Select * from userdata WHERE email = $1", [
+    email,
+  ]);
+
+  if (result.rows.length > 0) {
+    const hashed = await bcrypt.hash(value, 10);
+    await db.query("UPDATE userdata SET password_hash = $1 WHERE email = $2", [
+      hashed,
+      email,
+    ]);
+    res.status(200).json({ message: "Password updated successfully" });
+  } else {
+    res.status(404).json({ message: "User not found!" });
+  }
+});
+
 app.delete("/api/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
-    console.log(req.params);
+    // console.log(id);
+    // console.log(req.params);
 
     await db.query("DELETE FROM diary_entries WHERE id=$1", [id]);
     res.status(200).send("Deleted sucessfully!!");
@@ -227,36 +388,30 @@ app.delete("/api/delete/:id", async (req, res) => {
 passport.use(
   "local",
   new Strategy(async function verify(username, password, cb) {
-    if (username === "" || password === "") {
-      console.log("Please fill the details!!!");
-    } else {
+    try {
+      if (!username || !password) {
+        return cb(null, false, { message: "Missing credentials" });
+      }
+
       const result = await db.query(
-        "SELECT * FROM userData WHERE username = $1",
+        "SELECT * FROM userdata WHERE username = $1",
         [username]
       );
 
-      try {
-        if (result.rows.length > 0) {
-          const data = result.rows[0];
-          const savedPassword = data.password_hash;
-
-          bcrypt.compare(password, savedPassword, (err, result) => {
-            if (err) {
-              return cb(err);
-            } else {
-              if (result) {
-                return cb(null, data);
-              } else {
-                return cb("User not found!!");
-              }
-            }
-          });
-        } else {
-          return cb("User not registered!!");
-        }
-      } catch (err) {
-        return cb(err);
+      if (result.rows.length === 0) {
+        return cb(null, false, { message: "User not registered" });
       }
+
+      const user = result.rows[0];
+      const match = await bcrypt.compare(password, user.password_hash);
+
+      if (!match) {
+        return cb(null, false, { message: "Incorrect password" });
+      }
+
+      return cb(null, user);
+    } catch (err) {
+      return cb(err);
     }
   })
 );
@@ -278,10 +433,14 @@ passport.use(
           [profile.email]
         );
         if (result.rows.length === 0) {
+          const diaryUsername = profile.displayName
+            .toLowerCase()
+            .replace(/\s+/g, "_"); // just an example
           const newUser = await db.query(
-            "INSERT INTO userdata (username,password_hash) VALUES ($1,$2) RETURNING *",
-            [profile.email, "googleSignUp"]
+            "INSERT INTO userdata (username, password_hash,  diary_name) VALUES ($1, $2, $3) RETURNING *",
+            [profile.email, "googleSignUp", profile.displayName]
           );
+
           console.log(newUser.rows[0]);
           cb(null, newUser.rows[0]);
         } else {
@@ -296,13 +455,22 @@ passport.use(
 );
 
 passport.serializeUser((user, cb) => {
-  cb(null, user);
+  cb(null, user.id); // just store user ID
 });
 
-passport.deserializeUser((user, cb) => {
-  cb(null, user);
+passport.deserializeUser(async (id, cb) => {
+  try {
+    const result = await db.query("SELECT * FROM userdata WHERE id = $1", [id]);
+    if (result.rows.length > 0) {
+      cb(null, result.rows[0]);
+    } else {
+      cb(new Error("User not found"));
+    }
+  } catch (err) {
+    cb(err);
+  }
 });
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server listening on port ${port}...`);
 });
