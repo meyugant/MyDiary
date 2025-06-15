@@ -13,6 +13,9 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
+
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
 // Ensure uploads directory exists
 const uploadDir = "./uploads";
 if (!fs.existsSync(uploadDir)) {
@@ -123,9 +126,9 @@ app.get("/mydiary", (req, res) => {
   // console.log(req.isAuthenticated());
 
   if (req.isAuthenticated()) {
-    res.redirect("http://localhost:5173/MyDiary/home");
+    res.redirect(`${FRONTEND_URL}/home`);
   } else {
-    res.redirect("/MyDiary/login");
+    res.redirect("/login");
   }
 });
 
@@ -136,7 +139,7 @@ app.get("/api/get-liked", async (req, res) => {
     );
     res.json(result.rows);
   } else {
-    res.redirect("/MyDiary/login");
+    res.redirect("/login");
   }
 });
 
@@ -151,7 +154,7 @@ app.get(
   "/auth/google/mydiary",
   passport.authenticate("google", {
     successRedirect: "/mydiary",
-    failureRedirect: "/MyDiary/login",
+    failureRedirect: "/login",
   })
 );
 
