@@ -10,11 +10,11 @@ import IntroPage from "./components/MyDiary";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Routes>
-      <Route path="/MyDiary/login" element={<Login />} />
-      <Route path="/MyDiary/register" element={<Register />} />
-      <Route path="/MyDiary/home" element={<App />} />
-      <Route path="/MyDiary/update" element={<UpdateDetails />} />
-      <Route path="/MyDiary" element={<IntroPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/home" element={<App />} />
+      <Route path="/update" element={<UpdateDetails />} />
+      <Route path="/" element={<IntroPage />} />
     </Routes>
   </BrowserRouter>
 );
