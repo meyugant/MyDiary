@@ -115,7 +115,9 @@ app.get("/api/mydiary/:user_id", async (req, res) => {
 });
 
 app.get("/mydiary", (req, res) => {
-  console.log(req.isAuthenticated());
+  console.log("Session cookie:", req.session);
+  console.log("User in req.user:", req.user);
+  console.log("Is Authenticated:", req.isAuthenticated());
 
   if (req.isAuthenticated()) {
     res.redirect(`${FRONTEND_URL}/home`);
@@ -473,6 +475,7 @@ passport.serializeUser((user, cb) => {
 });
 
 passport.deserializeUser(async (id, cb) => {
+  console.log("Trying to deserialize user ID:", id);
   try {
     const result = await db.query("SELECT * FROM userdata WHERE id = $1", [id]);
     if (result.rows.length > 0) {
