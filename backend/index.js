@@ -76,6 +76,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true, // 🟢 important for trusting HTTPS proxy (like Render)
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
       sameSite: isProduction ? "none" : "lax",
