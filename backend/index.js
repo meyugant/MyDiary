@@ -70,6 +70,7 @@ app.use(
   })
 );
 
+const isProduction = process.env.NODE_ENV === "production";
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -77,8 +78,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
-      sameSite: "lax",            // 🚨 required for cross-origin cookies
-      secure: false                 // 🚨 required for HTTPS (Vercel)
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction, // ✅ only true in production (HTTPS)
     },
   })
 );
