@@ -98,17 +98,6 @@ app.post("/logout", (req, res, next) => {
   });
 });
 
-// app.get("/", (req, res) => {
-//   res.render("login.ejs");
-// });
-
-// app.get("/register", (req, res) => {
-//   res.render("register.ejs");
-// });
-
-// app.get("/login", (req, res) => {
-//   res.render("login.ejs");
-// });
 
 //fetch all entries to be visible to the user....
 app.get("/api/mydiary/:user_id", async (req, res) => {
