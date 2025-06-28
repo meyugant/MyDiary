@@ -127,7 +127,7 @@ app.get("/mydiary", (req, res) => {
 });
 
 app.get("/api/get-liked", async (req, res) => {
-  console.log(req.isAuthenticated());
+  console.log("get-liked : ",req.isAuthenticated());
   if (req.isAuthenticated()) {
     const result = await db.query(
       "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked FROM diary_entries WHERE liked=true ORDER BY dt DESC, id DESC"
@@ -154,7 +154,7 @@ app.get(
 );
 
 app.get("/api/user", (req, res) => {
-  console.log(req.isAuthenticated());
+  console.log("api/user:",req.isAuthenticated());
   if (req.isAuthenticated()) {
     res.json({
       user_id: req.user.id,
@@ -183,7 +183,7 @@ app.get("/api/:id", async (req, res) => {
 
 app.get("/get-profile/:userid", async (req, res) => {
   const { userid } = req.params;
-  console.log(req.isAuthenticated());
+  console.log("get-profile : ",req.isAuthenticated());
   if (req.isAuthenticated()) {
     const result = await db.query(
       "Select id, profile_image From userdata Where id = $1 ",
@@ -212,7 +212,7 @@ app.post("/upload-image", upload.single("image"), (req, res) => {
 });
 
 app.post("/toggle-like", async (req, res) => {
-  console.log(req.body);
+  console.log("toggle-like:",req.body);
   const { id } = req.body;
 
   if (!id) return res.status(400).json({ error: "entryId is required" });
