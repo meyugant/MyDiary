@@ -115,7 +115,7 @@ app.get("/api/mydiary/:user_id", async (req, res) => {
 });
 
 app.get("/mydiary", (req, res) => {
-  // console.log(req.isAuthenticated());
+  console.log(req.isAuthenticated());
 
   if (req.isAuthenticated()) {
     res.redirect(`${FRONTEND_URL}/home`);
