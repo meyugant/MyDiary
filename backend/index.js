@@ -77,8 +77,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
-      sameSite: "none",            // 🚨 required for cross-origin cookies
-      secure: true                 // 🚨 required for HTTPS (Vercel)
+      sameSite: "lax",            // 🚨 required for cross-origin cookies
+      secure: false                 // 🚨 required for HTTPS (Vercel)
     },
   })
 );
