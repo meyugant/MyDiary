@@ -1,9 +1,7 @@
 /* In index.css or global styles */
-html,
-body,
-#root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-}
+@import "tailwindcss";
+
+
+
+
+
