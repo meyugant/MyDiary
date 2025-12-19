@@ -5,7 +5,7 @@
   /* flex-wrap: wrap; */
   flex-grow: 0;
   flex-shrink: 0;
-  height: 10vh;
+  height: 13vh;
   width: 30vw;
   background: #e6ecff;
   background: linear-gradient(145deg, #8acde1, #ffffff);
@@ -115,3 +115,4 @@
 .like-button:hover {
   transform: scale(1.2);
 }
+
