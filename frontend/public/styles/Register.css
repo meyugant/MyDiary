@@ -1,0 +1,151 @@
+/* public/styles/Register.css */
+
+/* .register-form {
+  max-width: 400px;
+  margin-top: 5rem;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: #1e1e2f;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #2e2e42;
+  color: #fff;
+}
+
+.register-form input::placeholder {
+  color: #bbb;
+}
+
+.register-form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #ff6b81;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.register-form button:hover {
+  background: #ff4b61;
+} */
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.register-form {
+  width: 350px;
+  padding: 2rem;
+  background: #ffffff0d;
+  backdrop-filter: blur(10px);
+  border: 1px solid #100f0f30;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: rgb(25, 23, 23);
+  box-shadow: 0 0 0 2px rgb(117, 117, 222, 0.3);
+  text-align: center;
+}
+
+.register-form input {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #2c2c2c;
+  color: white;
+  font-size: 1rem;
+}
+
+.register-form input::placeholder {
+  color: #cccccc;
+}
+
+.register-form button {
+  padding: 0.75rem;
+  background-color: #4a90e2;
+  font-size: 0.9em;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-form button:hover {
+  background-color: #357abd;
+}
+
+.switch-form {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #141313;
+}
+
+.switch-form a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.switch-form a:hover {
+  text-decoration: underline;
+}
+
+.google-login-button {
+  background-color: white;
+  color: #444;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.google-login-button:hover {
+  background-color: #f5f5f5;
+}
+
+.divider {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.logo {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 600;
+  font-size: 2rem;
+  color: #4a148c;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.logo span {
+  color: #e91e63; /* Soft pink to represent emotion */
+  font-weight: 700;
+}
