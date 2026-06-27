@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-
-
->>>>>>> d1a74f4e64497a21200ca8d354a84453e8daaaf5
 .diaryEntry {
   margin-left: 27vw;
   /* margin-top: 1.5em; */
@@ -21,11 +16,7 @@
 .content-area {
   background-color: aqua;
   height: 90%;
-<<<<<<< HEAD
   width: 100%;
-=======
-  width: 92%;
->>>>>>> d1a74f4e64497a21200ca8d354a84453e8daaaf5
   text-align: center;
   border-radius: 10px;
   color: white;
@@ -41,11 +32,7 @@
 }
 
 .back-btn {
-<<<<<<< HEAD
   margin: 0.5em;
-=======
-  margin: 1em;
->>>>>>> d1a74f4e64497a21200ca8d354a84453e8daaaf5
   height: 1.3em;
   width: 4em;
   font-size: 1.5em;
