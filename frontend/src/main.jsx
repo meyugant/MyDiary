@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -17,5 +18,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Route path="/update" element={<UpdateDetails />} />
       <Route path="/" element={<IntroPage />} />
     </Routes>
+    <SpeedInsights />
   </BrowserRouter>
 );
