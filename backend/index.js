@@ -63,7 +63,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://my-diary-tau.vercel.app",
-      "mydiaryweb.com",
+      "https://mydiaryweb.com",
     ],
     methods: "GET,POST,DELETE,PUT",
     credentials: true, // important for cookies/session
