@@ -200,7 +200,7 @@ app.post("/feedback", async (req, res) => {
     await db.query(
       `
             INSERT INTO feedback
-            (name,email,type,message)
+            (name,email,feedback_type,message)
             VALUES($1,$2,$3,$4)
             `,
       [name, email, type, message],
