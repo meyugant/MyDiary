@@ -1,85 +1,125 @@
-import React from "react";
 import { useState } from "react";
-import "../../public/styles/Update.css";
+import { Link } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-function UpdateDetails() {
+import { Mail, User, Lock } from "lucide-react";
+
+import AuthCard from "../components/auth/AuthCard";
+import AuthInput from "../components/auth/AuthInput";
+import AuthButton from "../components/auth/AuthButton";
+
+export default function UpdateDetails() {
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+
   const [mode, setMode] = useState("username");
+  const [loading, setLoading] = useState(false);
+
   const [email, setEmail] = useState("");
   const [value, setValue] = useState("");
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    // Send POST request to `/recover-username` or `/recover-password` based on mode
+
+    setLoading(true);
+
     const endpoint =
       mode === "username" ? "recover-username" : "recover-password";
-    console.log(`POST ${endpoint}`, { email, value });
 
     try {
-      // axios.post(endpoint, { email, value })...
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/update/${endpoint}`,
-        {
-          email,
-          value,
-        }
+      await axios.post(`${apiBaseUrl}/update/${endpoint}`, {
+        email,
+        value,
+      });
+
+      toast.success(
+        mode === "username"
+          ? "Username updated successfully!"
+          : "Password updated successfully!",
       );
-      console.log(res.message);
+
       window.location.href = "/login";
     } catch (err) {
-      console.error("Some error occured :", err);
+      toast.error(err.response?.data?.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <>
-      <div className="recover-box">
-        <h2>Recover Account</h2>
+    <AuthCard
+      title="Recover Account"
+      subtitle="Update your username or password."
+    >
+      <div className="flex rounded-xl overflow-hidden border border-slate-700 mb-8">
+        <button
+          type="button"
+          onClick={() => {
+            setMode("username");
+            setValue("");
+          }}
+          className={`flex-1 py-3 transition ${
+            mode === "username"
+              ? "bg-violet-600 text-white"
+              : "bg-slate-800 text-slate-400"
+          }`}
+        >
+          Username
+        </button>
 
-        <div className="toggle-mode">
-          <button
-            className={mode === "username" ? "active" : ""}
-            onClick={() => setMode("username")}>
-            Update Username
-          </button>
-          <button
-            className={mode === "password" ? "active" : ""}
-            onClick={() => setMode("password")}>
-            Update Password
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="recover-form">
-          <input
-            type="email"
-            required
-            placeholder="Enter your registered email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {mode === "username" ? (
-            <input
-              type="text"
-              required
-              placeholder="Enter new username"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
-          ) : (
-            <input
-              type="password"
-              required
-              placeholder="Enter new password"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
-          )}
-          <button type="submit">Submit</button>
-        </form>
+        <button
+          type="button"
+          onClick={() => {
+            setMode("password");
+            setValue("");
+          }}
+          className={`flex-1 py-3 transition ${
+            mode === "password"
+              ? "bg-violet-600 text-white"
+              : "bg-slate-800 text-slate-400"
+          }`}
+        >
+          Password
+        </button>
       </div>
-      <footer>Copyright reserved @MyDiary</footer>
-    </>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <AuthInput
+          icon={Mail}
+          label="Registered Email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        {mode === "username" ? (
+          <AuthInput
+            icon={User}
+            label="New Username"
+            placeholder="Enter new username"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        ) : (
+          <AuthInput
+            icon={Lock}
+            type="password"
+            label="New Password"
+            placeholder="Enter new password"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        )}
+
+        <AuthButton loading={loading}>Update</AuthButton>
+
+        <p className="text-center text-slate-400">
+          Remember your credentials?{" "}
+          <Link to="/login" className="text-violet-400 hover:text-violet-300">
+            Login
+          </Link>
+        </p>
+      </form>
+    </AuthCard>
   );
 }
-
-export default UpdateDetails;

@@ -1,73 +1,109 @@
-import "../../public/styles/Login.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios"; // ✅ Don't forget this
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+import { User, Lock } from "lucide-react";
+
+import AuthCard from "../components/auth/AuthCard";
+import AuthInput from "../components/auth/AuthInput";
+import AuthButton from "../components/auth/AuthButton";
+import GoogleButton from "../components/auth/GoogleButton";
 
 export default function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
+
+  async function handleSubmit(e) {
     e.preventDefault();
+
+    setLoading(true);
+
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/login`,
-        form,
-        {
-          withCredentials: true,
-        }
-      );
-      alert("Login successful!");
+      await axios.post(`${apiBaseUrl}/login`, form, {
+        withCredentials: true,
+      });
+
+      toast.success("Welcome Back!");
+
       navigate("/home");
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login Failed.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  const handleGoogleLogin = () => {
-    window.open(`${import.meta.env.VITE_API_URL}/auth/google`, "_self");
-  };
+  function handleGoogleLogin() {
+    window.open(`${apiBaseUrl}/auth/google`, "_self");
+  }
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <h2>Welcome Back to MyDiary</h2>
-        <input
-          type="text"
-          placeholder="Username" // ✅ Changed from Email to Username
-          required
+    <AuthCard title="Welcome Back" subtitle="Your story continues here.">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <AuthInput
+          icon={User}
+          label="Username"
+          placeholder="Enter username"
           value={form.username}
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              username: e.target.value,
+            })
+          }
         />
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
-        <button type="submit">Login</button>
-        <div className="divider">OR</div>
 
-        <button
-          type="button"
-          className="google-login-button"
-          onClick={handleGoogleLogin}>
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google Logo"
-            style={{ width: "20px", marginRight: "10px" }}
-          />
-          Continue with Google
-        </button>
-        <p className="switch-form">
-          Don't have an account? <Link to="/register">Register</Link>
-        </p>
-        <p className="forgot-details">
-          <Link to="/update">Forgot password or Username ?</Link>
+        <AuthInput
+          icon={Lock}
+          type="password"
+          label="Password"
+          placeholder="Enter password"
+          value={form.password}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              password: e.target.value,
+            })
+          }
+        />
+
+        <div className="flex justify-end">
+          <Link
+            to="/update"
+            className="text-violet-400 hover:text-violet-300 text-sm"
+          >
+            Recover Account
+          </Link>
+        </div>
+
+        <AuthButton loading={loading}>Login</AuthButton>
+
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-slate-700" />
+          <span className="text-slate-500 text-sm">OR</span>
+          <div className="flex-1 h-px bg-slate-700" />
+        </div>
+
+        <GoogleButton onClick={handleGoogleLogin} />
+
+        <p className="text-center text-slate-400">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-violet-400 hover:text-violet-300"
+          >
+            Register
+          </Link>
         </p>
       </form>
-    </div>
+    </AuthCard>
   );
 }

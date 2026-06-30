@@ -1,91 +1,125 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../../public/styles/Register.css";
+import toast from "react-hot-toast";
+
+import { Mail, BookUser, User, Lock } from "lucide-react";
+
+import AuthCard from "../components/auth/AuthCard";
+import AuthInput from "../components/auth/AuthInput";
+import AuthButton from "../components/auth/AuthButton";
+import GoogleButton from "../components/auth/GoogleButton";
 
 export default function Register() {
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
-    username: "",
+    email: "",
     diary_username: "",
-    password: "",
     display_name: "",
+    password: "",
   });
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
+
+    setLoading(true);
+
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/register`,
-        form,
-        {
-          withCredentials: true,
-        }
-      );
-      console.log(res);
+      await axios.post(`${apiBaseUrl}/register`, form, {
+        withCredentials: true,
+      });
 
-      window.location.href = "/home";
+      toast.success("Account created successfully!");
+
+      navigate("/home");
     } catch (err) {
-      alert("User already exists!!");
-      console.log(err.response?.data);
+      toast.error(err.response?.data?.message || "User already exists.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  const handleGoogleSignup = () => {
-    window.open(`${import.meta.env.VITE_API_URL}/auth/google`, "_self");
-  };
+  function handleGoogleSignup() {
+    window.open(`${apiBaseUrl}/auth/google`, "_self");
+  }
 
   return (
-    <div className="register-container">
-      <form onSubmit={handleSubmit} className="register-form">
-        <h1 className="logo">
-          My<span>Diary</span>
-        </h1>
-        <h2>Create Your Account</h2>
-        <input
-          placeholder="Email"
-          required
+    <AuthCard title="Create Account" subtitle="Start preserving your memories.">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <AuthInput
+          icon={Mail}
+          label="Email"
+          placeholder="Enter your email"
           value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              email: e.target.value,
+            })
+          }
         />
-        <input
-          placeholder="Diary Username"
-          required
+
+        <AuthInput
+          icon={BookUser}
+          label="Diary Username"
+          placeholder="Choose your diary username"
           value={form.diary_username}
-          onChange={(e) => setForm({ ...form, diary_username: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              diary_username: e.target.value,
+            })
+          }
         />
-        <input
-          placeholder="Display Name"
-          required
+
+        <AuthInput
+          icon={User}
+          label="Display Name"
+          placeholder="Your display name"
           value={form.display_name}
-          onChange={(e) => setForm({ ...form, display_name: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              display_name: e.target.value,
+            })
+          }
         />
-        <input
+
+        <AuthInput
+          icon={Lock}
           type="password"
-          placeholder="Password"
-          required
+          label="Password"
+          placeholder="Create a password"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              password: e.target.value,
+            })
+          }
         />
-        <button type="submit">Register</button>
 
-        <div className="divider">OR</div>
+        <AuthButton loading={loading}>Create Account</AuthButton>
 
-        <button
-          type="button"
-          className="google-login-button"
-          onClick={handleGoogleSignup}>
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google Logo"
-            style={{ width: "20px", marginRight: "10px" }}
-          />
-          Continue with Google
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-slate-700" />
+          <span className="text-slate-500 text-sm">OR</span>
+          <div className="flex-1 h-px bg-slate-700" />
+        </div>
 
-        <p className="switch-form">
-          Already have an account? <Link to="/login">Login</Link>
+        <GoogleButton onClick={handleGoogleSignup} />
+
+        <p className="text-center text-slate-400">
+          Already have an account?{" "}
+          <Link to="/login" className="text-violet-400 hover:text-violet-300">
+            Login
+          </Link>
         </p>
       </form>
-    </div>
+    </AuthCard>
   );
 }

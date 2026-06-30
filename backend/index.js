@@ -26,20 +26,20 @@ const port = 3000;
 const saltRounds = 10;
 env.config();
 
-// const db = new pg.Client({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// });
-
 const db = new pg.Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
 });
+
+// const db = new pg.Client({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -192,6 +192,34 @@ app.get("/get-profile/:userid", async (req, res) => {
   }
 });
 
+//feedback
+app.post("/feedback", async (req, res) => {
+  const { name, email, type, message } = req.body;
+
+  try {
+    await db.query(
+      `
+            INSERT INTO feedback
+            (name,email,type,message)
+            VALUES($1,$2,$3,$4)
+            `,
+      [name, email, type, message],
+    );
+
+    res.json({
+      success: true,
+      message: "Feedback submitted successfully.",
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+});
+
 app.post("/upload-image", upload.single("image"), (req, res) => {
   const imagePath = "/uploads/" + req.file.filename;
 
@@ -308,32 +336,38 @@ app.post("/login", (req, res, next) => {
 });
 
 app.post("/api/submit", async (req, res) => {
-  const { user_id, entry_no, dt, sub, cont } = req.body;
-  // console.log(req.body); // Debugging: See what the frontend is sending
+  const { user_id, dt, sub, cont } = req.body;
+  console.log(req.body); // Debugging: See what the frontend is sending
 
-  if (!user_id || !entry_no || !dt || !sub || !cont) {
+  if (!user_id || !dt || !sub || !cont) {
     return res.status(400).send("All fields are required!");
   }
 
   try {
     const entryId = uuidv4();
     const utcDate = new Date(dt).toISOString();
-    const entry_no_num = Number(entry_no); // Convert entry_no to a number
     const liked = false;
-    // const date = new Date(utcDate);
-    // const formattedDate = `${date.getUTCFullYear()}-${String(
-    //   date.getUTCMonth() + 1
-    // ).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
-    // console.log(formattedDate);
+    const result = await db.query(
+      "SELECT COUNT(*) FROM diary_entries WHERE user_id = $1",
+      [user_id],
+    );
+
+    const entry_no_num = Number(result.rows[0].count) + 1;
 
     await db.query(
       "INSERT INTO diary_entries (id, user_id, dt, sub, cont, entry_no,liked) VALUES ($1, $2, $3, $4, $5,$6,$7)",
       [entryId, user_id, utcDate, sub, cont, entry_no_num, liked],
     );
 
-    res
-      .status(201)
-      .json({ entryId, user_id, entry_no, dt: utcDate, sub, cont, liked });
+    res.status(201).json({
+      entryId,
+      user_id,
+      entry_no: entry_no_num,
+      dt: utcDate,
+      sub,
+      cont,
+      liked,
+    });
   } catch (error) {
     console.error("Error saving diary entry:", error);
     res.status(500).send("An error occurred while saving the diary entry.");
