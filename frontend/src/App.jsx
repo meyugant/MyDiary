@@ -38,24 +38,25 @@ function App() {
         setUsername(data.username);
         setDate(data.creation_date);
         fetchEntries(data.user_id);
-        fetchProfile(data.user_id);
+        // fetchProfile(data.user_id);
+        setProfile(data.profile_image);
+        console.log(data.profile_image);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
-    const fetchProfile = async (user_id) => {
-      try {
-        const res = await axios.get(`${apiBaseUrl}/get-profile/${user_id}`, {
-          withCredentials: true,
-        });
-        console.log(res.data.rows[0].profile_image);
-        const imgUrl = res.data.rows[0].profile_image;
-        setProfile(imgUrl);
-      } catch (err) {
-        console.log("Some error occured : ", err);
-      }
-    };
+    // const fetchProfile = async (user_id) => {
+    //   try {
+    //     const res = await axios.get(`${apiBaseUrl}/get-profile/${user_id}`, {
+    //       withCredentials: true,
+    //     });
+    //     console.log(res.data.rows[0].profile_image);
+    //     setProfile(res.data.path);
+    //   } catch (err) {
+    //     console.log("Some error occured : ", err);
+    //   }
+    // };
 
     const fetchEntries = async (user_id) => {
       try {

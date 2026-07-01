@@ -1,3 +1,4 @@
+import env from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
@@ -7,51 +8,52 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
-import env from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
-
-// Ensure uploads directory exists
-const uploadDir = "./uploads";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
 env.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// const db = new pg.Client({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// });
+console.log(cloudinary.config());
 
 const db = new pg.Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Create this folder in your project root
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    cb(null, req.user.id + "-profile" + ext); // Save with user ID for uniqueness
-  },
+// const db = new pg.Client({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => ({
+    folder: "MyDiary/profile-images",
+    public_id: `${req.user.id}-profile`,
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    overwrite: true,
+    resource_type: "image",
+  }),
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 db.connect();
 
@@ -84,8 +86,6 @@ app.use(
     },
   }),
 );
-
-app.use("/uploads", express.static("uploads"));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -161,8 +161,9 @@ app.get("/api/user", (req, res) => {
       user_id: req.user.id,
       username: req.user.diary_name,
       creation_date: req.user.created_at,
+      profile_image: req.user.profile_image,
     });
-    // console.log(req.user);
+    console.log(req.user);
   } else {
     res.status(401).json({ error: "Not authenticated" });
   }
@@ -182,19 +183,19 @@ app.get("/api/:id", async (req, res) => {
   }
 });
 
-app.get("/get-profile/:userid", async (req, res) => {
-  const { userid } = req.params;
-  console.log("get-profile : ", req.isAuthenticated());
-  if (req.isAuthenticated()) {
-    const result = await db.query(
-      "Select id, profile_image From userdata Where id = $1 ",
-      [userid],
-    );
-    res.json(result);
-  } else {
-    console.error("User not authenticated!!");
-  }
-});
+// app.get("/get-profile/:userid", async (req, res) => {
+//   const { userid } = req.params;
+//   console.log("get-profile : ", req.isAuthenticated());
+//   if (req.isAuthenticated()) {
+//     const result = await db.query(
+//       "Select id, profile_image From userdata Where id = $1 ",
+//       [userid],
+//     );
+//     res.json(result);
+//   } else {
+//     console.error("User not authenticated!!");
+//   }
+// });
 
 //feedback
 app.post("/feedback", async (req, res) => {
@@ -224,20 +225,34 @@ app.post("/feedback", async (req, res) => {
   }
 });
 
-app.post("/upload-image", upload.single("image"), (req, res) => {
-  const imagePath = "/uploads/" + req.file.filename;
+app.post("/upload-image", upload.single("image"), async (req, res) => {
+  try {
+    console.log("File received:");
+    console.log(req.file);
 
-  db.query("UPDATE userdata SET profile_image = $1 WHERE id = $2", [
-    imagePath,
-    req.user.id,
-  ])
-    .then(() => {
-      res.json({ message: "Image uploaded successfully", path: imagePath });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).json({ message: "Database update failed" });
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No file received",
+      });
+    }
+
+    const imageUrl = req.file.path;
+
+    console.log("Cloudinary URL:", imageUrl);
+
+    await db.query("UPDATE userdata SET profile_image = $1 WHERE id = $2", [
+      imageUrl,
+      req.user.id,
+    ]);
+
+    res.json({
+      message: "Uploaded successfully",
+      path: imageUrl,
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
 });
 
 app.post("/toggle-like", async (req, res) => {

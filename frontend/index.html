@@ -1,28 +1,94 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Basic -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>MyDiary | Your Private Online Journal</title>
+
     <meta
       name="description"
       content="MyDiary is a secure and modern online journal that helps you capture memories, thoughts, and emotions privately."
     />
+
     <meta
       name="keywords"
-      content="diary,journal,online diary,digital journal,private diary,MyDiary"
+      content="online diary, digital journal, private journal, secure diary, personal diary, diary app, journal app, MyDiary"
     />
-    <meta charset="UTF-8" />
+
+    <meta name="author" content="Yugant Sidar" />
+
+    <meta name="robots" content="index, follow" />
+
+    <meta name="theme-color" content="#7C3AED" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://mydiaryweb.com/" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/diaryLogo.png" />
+    <link rel="apple-touch-icon" href="/diaryLogo.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/png" href="/diaryLogo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MyDiary" />
+    <meta property="og:title" content="MyDiary | Your Private Online Journal" />
+
+    <meta
+      property="og:description"
+      content="Capture your memories, thoughts and emotions securely with MyDiary."
+    />
+
+    <meta property="og:url" content="https://mydiaryweb.com" />
+
+    <meta property="og:image" content="https://mydiaryweb.com/og-image.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta
+      name="twitter:title"
+      content="MyDiary | Your Private Online Journal"
+    />
+
+    <meta
+      name="twitter:description"
+      content="Secure online journaling made simple."
+    />
+
+    <meta name="twitter:image" content="https://mydiaryweb.com/og-image.png" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MyDiary",
+        "url": "https://mydiaryweb.com",
+        "logo": "https://mydiaryweb.com/diaryLogo.png",
+        "description": "Secure online journal for capturing memories, thoughts and emotions."
+      }
+    </script>
+
     <link rel="stylesheet" href="./main.css" />
-    <title>MyDiary | Your Private Online Journal</title>
   </head>
+
   <body>
     <div id="root"></div>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

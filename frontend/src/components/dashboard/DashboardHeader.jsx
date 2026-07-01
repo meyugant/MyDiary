@@ -50,7 +50,7 @@ export default function DashboardHeader({
               <img
                 src={
                   profileImage
-                    ? `${apiBaseUrl}${profileImage}`
+                    ? profileImage
                     : `https://ui-avatars.com/api/?name=${username}`
                 }
                 alt={username}

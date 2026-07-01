@@ -68,7 +68,7 @@ export default function ProfilePage({
             <img
               src={
                 profileImage
-                  ? `${apiBaseUrl}${profileImage}`
+                  ? profileImage
                   : `https://ui-avatars.com/api/?name=${username}`
               }
               alt={username}

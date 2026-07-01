@@ -26,7 +26,7 @@ export default function AuthButton({ children, loading }) {
         <>
           {children}
 
-          <ArrowRight size={18} />
+          {/* <ArrowRight size={18} /> */}
         </>
       )}
     </button>
