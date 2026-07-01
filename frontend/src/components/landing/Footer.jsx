@@ -124,7 +124,7 @@ export default function Footer({ isDark }) {
               </a>
 
               <a
-                href="mailto:your@email.com"
+                href="mailto:mydiaryweb.official@gmail.com"
                 className={`transition hover:text-violet-400 ${
                   isDark ? "text-slate-400" : "text-slate-600"
                 }`}
@@ -196,7 +196,7 @@ export default function Footer({ isDark }) {
             <Heart size={18} className="text-red-500 fill-red-500" />
 
             <span className={`${isDark ? "text-slate-400" : "text-slate-600"}`}>
-              by Yugant
+              by our team.
             </span>
           </div>
         </div>
