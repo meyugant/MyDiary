@@ -75,11 +75,16 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type":"WebSite",
         "name": "MyDiary",
         "url": "https://mydiaryweb.com",
         "logo": "https://mydiaryweb.com/diaryLogo.png",
-        "description": "Secure online journal for capturing memories, thoughts and emotions."
+        "description": "Secure online journal for capturing memories, thoughts and emotions.",
+        "potentialAction":{
+            "@type":"SearchAction",
+            "target":"https://mydiaryweb.com/?q={search_term_string}",
+            "query-input":"required name=search_term_string"
+        }
       }
     </script>
 
