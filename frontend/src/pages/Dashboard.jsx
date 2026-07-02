@@ -78,10 +78,10 @@ export default function Dashboard({
                 <WritingAnalytics entries={entries} />
 
                 <JournalEditor
-                  subject={subject}
-                  setSubject={setSubject}
-                  entry={entry}
-                  setEntry={setEntry}
+                  title={subject}
+                  setTitle={setSubject}
+                  text={entry}
+                  setText={setEntry}
                   date={date}
                   addNote={addNote}
                 />
