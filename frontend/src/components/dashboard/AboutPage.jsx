@@ -47,7 +47,7 @@ export default function AboutPage() {
 
             <p className="text-slate-400 mt-4">
               Built with React, Express and PostgreSQL using a modern full-stack
-              architecture.
+              architecture codebase available on github.
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function AboutPage() {
           <p className="text-slate-500">Version 1.0.0</p>
 
           <p className="text-slate-400 mt-2">
-            © 2026 MyDiary • Designed and Developed by Yugant
+            © 2026 MyDiary • Designed and Developed by mydiaryweb team.
           </p>
         </div>
       </div>
