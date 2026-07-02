@@ -379,7 +379,7 @@ app.post("/api/submit", async (req, res) => {
     );
 
     res.status(201).json({
-      entryId,
+      id: entryId,
       user_id,
       entry_no: entry_no_num,
       dt: utcDate,
