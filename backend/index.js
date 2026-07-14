@@ -35,11 +35,18 @@ console.log(cloudinary.config());
 //   port: process.env.PG_PORT,
 // });
 
-const db = new pg.Client({
+const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+});
+
+db.on("error", (err) => {
+  console.error("Unexpected PostgreSQL pool error:", err);
 });
 
 const storage = new CloudinaryStorage({
@@ -54,8 +61,6 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage });
-
-db.connect();
 
 // app.use(express.static("public"));
 app.use(bodyParser.json());
@@ -182,20 +187,6 @@ app.get("/api/:id", async (req, res) => {
     res.status(500).send("An error occurred while fetching the data.");
   }
 });
-
-// app.get("/get-profile/:userid", async (req, res) => {
-//   const { userid } = req.params;
-//   console.log("get-profile : ", req.isAuthenticated());
-//   if (req.isAuthenticated()) {
-//     const result = await db.query(
-//       "Select id, profile_image From userdata Where id = $1 ",
-//       [userid],
-//     );
-//     res.json(result);
-//   } else {
-//     console.error("User not authenticated!!");
-//   }
-// });
 
 //feedback
 app.post("/feedback", async (req, res) => {
