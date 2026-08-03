@@ -12,6 +12,7 @@ function App() {
   const [creationDate, setDate] = useState("");
   const [userId, setUserId] = useState(null);
   const [activePage, setActivePage] = useState("home");
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [username, setUsername] = useState("");
   const [totalEntries, setTotal] = useState(0);
@@ -38,25 +39,12 @@ function App() {
         setUsername(data.username);
         setDate(data.creation_date);
         fetchEntries(data.user_id);
-        // fetchProfile(data.user_id);
         setProfile(data.profile_image);
         console.log(data.profile_image);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
-    // const fetchProfile = async (user_id) => {
-    //   try {
-    //     const res = await axios.get(`${apiBaseUrl}/get-profile/${user_id}`, {
-    //       withCredentials: true,
-    //     });
-    //     console.log(res.data.rows[0].profile_image);
-    //     setProfile(res.data.path);
-    //   } catch (err) {
-    //     console.log("Some error occured : ", err);
-    //   }
-    // };
 
     const fetchEntries = async (user_id) => {
       try {
@@ -140,6 +128,7 @@ function App() {
 
   function view_entry(entry) {
     setSelectedEntry(entry);
+    setSelectedEntryId(entry.id);
   }
 
   const toggleLike = async (entryID) => {
@@ -172,6 +161,8 @@ function App() {
   };
 
   if (selectedEntry) {
+    const selectedEntry = entries.find((e) => e.id === selectedEntryId);
+    console.log("Selected Entry:", selectedEntry);
     return (
       <ViewEntryPage
         entry={selectedEntry}

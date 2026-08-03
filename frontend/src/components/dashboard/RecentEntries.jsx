@@ -136,8 +136,7 @@ export default function RecentEntries({
 
       <DeleteModal
         open={showDelete}
-        title={selectedEntry?.sub}
-        onCancel={() => setShowDelete(false)}
+        onClose={() => setShowDelete(false)}
         onConfirm={() => {
           deleteNote(selectedEntry.id);
           setShowDelete(false);

@@ -30,7 +30,6 @@ export default function CTA({ isDark }) {
             className="mt-8 bg-white text-violet-700 px-7 py-3 rounded-xl font-bold flex items-center gap-2 mx-auto hover:scale-105 transition-all duration-300"
           >
             Get Started
-            <ArrowRight size={18} />
           </button>
         </div>
       </div>

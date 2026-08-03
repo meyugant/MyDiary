@@ -18,14 +18,16 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const app = express();
 const port = 3000;
 const saltRounds = 10;
+const { Pool } = pg;
 env.config();
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-console.log(cloudinary.config());
+// console.log(cloudinary.config());
 
 // const db = new pg.Client({
 //   user: process.env.PG_USER,
@@ -34,6 +36,8 @@ console.log(cloudinary.config());
 //   password: process.env.PG_PASSWORD,
 //   port: process.env.PG_PORT,
 // });
+
+console.log(process.env.PG_DATABASE);
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -44,6 +48,14 @@ const db = new pg.Pool({
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
 });
+
+try {
+  const client = await db.connect();
+  console.log("PostgreSQL connected");
+  client.release();
+} catch (err) {
+  console.error("Database connection failed:", err);
+}
 
 db.on("error", (err) => {
   console.error("Unexpected PostgreSQL pool error:", err);
@@ -62,7 +74,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-// app.use(express.static("public"));
+app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -73,7 +85,7 @@ app.use(
       "https://mydiaryweb.com",
     ],
     methods: "GET,POST,DELETE,PUT",
-    credentials: true, // important for cookies/session
+    credentials: true,
   }),
 );
 
@@ -83,11 +95,11 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    proxy: true, // 🟢 important for trusting HTTPS proxy (like Render)
+    proxy: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
       sameSite: isProduction ? "none" : "lax",
-      secure: isProduction, // ✅ only true in production (HTTPS)
+      secure: isProduction,
     },
   }),
 );
@@ -110,7 +122,7 @@ app.get("/api/mydiary/:user_id", async (req, res) => {
   const { user_id } = req.params;
   try {
     const result = await db.query(
-      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked FROM diary_entries WHERE user_id=$1 ORDER BY dt DESC, id DESC",
+      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked,mood FROM diary_entries WHERE user_id=$1 ORDER BY dt DESC, id DESC",
       [user_id],
     );
     res.json(result.rows);
@@ -300,16 +312,9 @@ app.post("/register", async (req, res, next) => {
 
       const newUser = result.rows[0];
       console.log(newUser);
-      // console.log(req);
-
-      // Automatically log in the user
-      req.login(newUser, (err) => {
-        if (err) {
-          return next(err);
-        }
-        // res.render("info.ejs", { name: username });
-        // res.redirect("http://localhost:5173");
-        res.status(200).json({ message: "Registered", user: newUser });
+      return res.status(200).json({
+        message: "Registered",
+        user: newUser,
       });
     } catch (error) {
       console.error("Error registering user:", error);
@@ -346,10 +351,10 @@ app.post("/login", (req, res, next) => {
 });
 
 app.post("/api/submit", async (req, res) => {
-  const { user_id, dt, sub, cont } = req.body;
+  const { user_id, dt, sub, cont, mood } = req.body;
   console.log(req.body); // Debugging: See what the frontend is sending
 
-  if (!user_id || !dt || !sub || !cont) {
+  if (!user_id || !dt || !sub || !cont || !mood) {
     return res.status(400).send("All fields are required!");
   }
 
@@ -365,8 +370,8 @@ app.post("/api/submit", async (req, res) => {
     const entry_no_num = Number(result.rows[0].count) + 1;
 
     await db.query(
-      "INSERT INTO diary_entries (id, user_id, dt, sub, cont, entry_no,liked) VALUES ($1, $2, $3, $4, $5,$6,$7)",
-      [entryId, user_id, utcDate, sub, cont, entry_no_num, liked],
+      "INSERT INTO diary_entries (id, user_id, dt, sub, cont, entry_no,liked,mood) VALUES ($1, $2, $3, $4, $5,$6,$7,$8)",
+      [entryId, user_id, utcDate, sub, cont, entry_no_num, liked, mood],
     );
 
     res.status(201).json({
@@ -377,6 +382,7 @@ app.post("/api/submit", async (req, res) => {
       sub,
       cont,
       liked,
+      mood: mood,
     });
   } catch (error) {
     console.error("Error saving diary entry:", error);
@@ -424,8 +430,6 @@ app.post("/update/recover-password", async (req, res) => {
 app.delete("/api/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    // console.log(id);
-    // console.log(req.params);
 
     await db.query("DELETE FROM diary_entries WHERE id=$1", [id]);
     res.status(200).send("Deleted sucessfully!!");

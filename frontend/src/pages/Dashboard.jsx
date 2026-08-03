@@ -11,6 +11,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import WritingAnalytics from "../components/dashboard/WritingAnalytics";
 import AllEntriesPage from "../components/dashboard/AllEntries";
+import CalendarPage from "../components/dashboard/CalendarPage";
 
 export default function Dashboard({
   activePage,
@@ -34,13 +35,18 @@ export default function Dashboard({
   totalLikes,
 }) {
   const [search, setSearch] = useState("");
+  const [mood, setMood] = useState("😊 Happy");
 
   const filteredEntries = entries.filter((entry) => {
-    const q = search.toLowerCase();
+    const query = search.trim().toLowerCase();
+
+    if (!query) return true;
 
     return (
-      entry.sub.toLowerCase().includes(q) ||
-      entry.cont.toLowerCase().includes(q)
+      entry.sub.toLowerCase().includes(query) ||
+      entry.cont.toLowerCase().includes(query) ||
+      entry.entry_no.toString().includes(query) ||
+      new Date(entry.dt).toLocaleDateString("en-GB").includes(query)
     );
   });
 
@@ -84,6 +90,8 @@ export default function Dashboard({
                   setText={setEntry}
                   date={date}
                   addNote={addNote}
+                  mood={mood}
+                  setMood={setMood}
                 />
 
                 <RecentEntries
@@ -111,6 +119,8 @@ export default function Dashboard({
                 />
               </motion.div>
             )}
+
+            {activePage === "Calendar" && <CalendarPage entries={entries} />}
 
             {activePage === "About" && (
               <motion.div
