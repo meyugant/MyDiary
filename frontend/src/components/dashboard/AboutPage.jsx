@@ -7,7 +7,9 @@ export default function AboutPage() {
         <div className="text-center">
           <BookOpen size={60} className="mx-auto text-violet-500" />
 
-          <h1 className="text-3xl md:text-5xl font-bold text-white mt-6">About MyDiary</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mt-6">
+            About MyDiary
+          </h1>
 
           <p className="text-slate-400 mt-6 max-w-3xl mx-auto leading-7 md:leading-8 text-base md:text-lg">
             MyDiary is a secure and modern digital journal that lets you capture
@@ -53,7 +55,7 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-10 md:mt-16 border-t border-slate-800 pt-6 md:pt-10 text-center">
-          <p className="text-slate-500">Version 1.0.0</p>
+          <p className="text-slate-500">Version 2.0.0</p>
 
           <p className="text-slate-400 mt-2">
             © 2026 MyDiary • Designed and Developed by mydiaryweb team.

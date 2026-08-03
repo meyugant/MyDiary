@@ -58,7 +58,6 @@ export default function Hero({ isDark }) {
                 "
               >
                 <span>Start Writing</span>
-                <ArrowRight size={18} />
               </button>
             </div>
 

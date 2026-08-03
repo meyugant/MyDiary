@@ -1,4 +1,11 @@
-import { House, Heart, User, CircleHelp, LogOut } from "lucide-react";
+import {
+  House,
+  Heart,
+  User,
+  CircleHelp,
+  LogOut,
+  CalendarDays,
+} from "lucide-react";
 
 export default function DashboardSidebar({
   activePage,
@@ -15,6 +22,11 @@ export default function DashboardSidebar({
       icon: <Heart size={20} />,
       title: "Favorites",
       page: "Fav",
+    },
+    {
+      title: "Calendar",
+      icon: <CalendarDays size={20} />,
+      page: "Calendar",
     },
     {
       icon: <User size={20} />,

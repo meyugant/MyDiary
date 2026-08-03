@@ -1,4 +1,16 @@
-import { ArrowLeft, CalendarDays, Hash, Heart, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  Hash,
+  Heart,
+  Trash2,
+  Clock,
+  FileText,
+  Smile,
+} from "lucide-react";
+
+import DeleteModal from "./DeleteModal";
+import { useState } from "react";
 
 export default function ViewEntryPage({
   entry,
@@ -6,6 +18,10 @@ export default function ViewEntryPage({
   toggleLike,
   deleteNote,
 }) {
+  const wordCount = entry.cont.trim().split(/\s+/).filter(Boolean).length;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
   return (
     <div className="min-h-screen bg-slate-950 px-4 sm:px-6 lg:px-8 py-6 md:py-12 flex justify-center">
       <div className="w-full max-w-4xl">
@@ -26,7 +42,7 @@ export default function ViewEntryPage({
 
           <div className="flex flex-col lg:flex-row lg:justify-between gap-8">
             <div className="flex-1">
-              <div className="flex flex-wrap gap-5 text-slate-400 text-sm md:text-base">
+              <div className="flex flex-wrap gap-6 text-slate-400 text-sm md:text-base">
                 <div className="flex items-center gap-2">
                   <CalendarDays size={18} />
 
@@ -39,7 +55,22 @@ export default function ViewEntryPage({
 
                 <div className="flex items-center gap-2">
                   <Hash size={18} />
-                  Entry #{entry.entry_no}
+                  Entry {entry.entry_no}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* <Smile size={18} /> */}
+                  {entry.mood}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <FileText size={18} />
+                  {wordCount} words
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Clock size={18} />
+                  {readingTime} min read
                 </div>
               </div>
 
@@ -78,28 +109,31 @@ export default function ViewEntryPage({
               whitespace-pre-wrap
               break-words
               text-slate-300
-              text-base
-              md:text-xl
-              leading-8
-              md:leading-10
+              text-lg
+              md:text-[22px]
+              leading-9
+              tracking-wide
+              font-light
             "
           >
-            {entry.cont}
+            <span className="first-letter:text-5xl first-letter:font-bold first-letter:text-violet-400">
+              {entry.cont}
+            </span>
           </article>
 
           {/* Divider */}
 
-          <div className="h-px bg-slate-800 my-8 md:my-10" />
+          <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent mt-10" />
 
           {/* Footer */}
 
-          <div className="flex flex-col sm:flex-row gap-5 sm:justify-between sm:items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 pt-8">
             <p className="text-slate-500 italic text-sm md:text-base">
               Preserved forever with ❤️ using MyDiary.
             </p>
 
             <button
-              onClick={() => deleteNote(entry.id)}
+              onClick={() => setShowDeleteModal(true)}
               className="
                 flex
                 justify-center
@@ -122,6 +156,15 @@ export default function ViewEntryPage({
           </div>
         </div>
       </div>
+      <DeleteModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={() => {
+          deleteNote(entry.id);
+          goBack();
+          setShowDeleteModal(false);
+        }}
+      />
     </div>
   );
 }

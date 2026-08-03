@@ -59,7 +59,6 @@ export default function Features({ isDark }) {
 
             <button className="mt-8 flex items-center gap-2 text-violet-500 font-semibold hover:gap-4 transition-all">
               Learn More
-              <ArrowRight size={18} />
             </button>
           </div>
 

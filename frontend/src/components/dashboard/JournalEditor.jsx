@@ -7,17 +7,31 @@ export default function JournalEditor({
   setText,
   date,
   addNote,
+  mood,
+  setMood,
 }) {
   const handleSave = () => {
     addNote({
       sub: title,
       cont: text,
       dt: date,
+      mood: mood,
     });
 
     setTitle("");
     setText("");
   };
+
+  const moods = [
+    "😊 Happy",
+    "😌 Calm",
+    "😎 Motivated",
+    "🤩 Excited",
+    "😢 Sad",
+    "😡 Angry",
+    "😴 Tired",
+    "😰 Anxious",
+  ];
 
   return (
     <section className="mb-10 md:mb-12">
@@ -38,6 +52,28 @@ export default function JournalEditor({
           <div className="flex items-center gap-2 text-sm md:text-base text-slate-400">
             <Calendar size={18} />
             {new Date().toLocaleDateString()}
+          </div>
+        </div>
+        <div className="mt-6 mb-8">
+          <p className="text-slate-400 text-sm mb-3">
+            How are you feeling today?
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            {moods.map((item) => (
+              <button
+                key={item}
+                onClick={() => setMood(item)}
+                className={`px-4 py-3 rounded-xl transition-all duration-300
+        ${
+          mood === item
+            ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30"
+            : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+        }`}
+              >
+                {item}
+              </button>
+            ))}
           </div>
         </div>
 
