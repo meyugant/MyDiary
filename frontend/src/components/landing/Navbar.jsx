@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Moon, Sun, Menu, X } from "lucide-react";
+import { BookOpen, Moon, Sun, Menu, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Navbar({ isDark, toggleTheme }) {
@@ -7,20 +7,27 @@ export default function Navbar({ isDark, toggleTheme }) {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 backdrop-blur-xl border-b ${
+      className={`fixed left-0 top-0 z-50 w-full border-b backdrop-blur-2xl transition-colors duration-300 ${
         isDark
-          ? "bg-slate-950/80 border-slate-800"
-          : "bg-white/80 border-slate-200"
+          ? "border-slate-800/80 bg-[#050b1d]/80"
+          : "border-slate-200/80 bg-white/80"
       }`}
     >
-      <div className="max-w-7xl mx-auto h-20 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <div className="mx-auto flex h-[76px] max-w-[1400px] items-center justify-between px-5 sm:px-7 lg:px-10">
         {/* Logo */}
-
-        <Link to="/" className="flex items-center gap-3">
-          <BookOpen size={30} className="text-violet-500" />
+        <Link to="/" className="group flex items-center gap-3">
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 ${
+              isDark
+                ? "border-violet-500/20 bg-violet-500/10 group-hover:border-violet-500/40 group-hover:bg-violet-500/15"
+                : "border-violet-200 bg-violet-50 group-hover:border-violet-300"
+            }`}
+          >
+            <BookOpen size={21} strokeWidth={1.9} className="text-violet-500" />
+          </div>
 
           <span
-            className={`text-2xl md:text-3xl font-bold ${
+            className={`text-xl font-bold tracking-tight sm:text-2xl ${
               isDark ? "text-white" : "text-slate-900"
             }`}
           >
@@ -28,73 +35,112 @@ export default function Navbar({ isDark, toggleTheme }) {
           </span>
         </Link>
 
-        {/* Desktop Links */}
-
+        {/* Desktop Navigation */}
         <div
-          className={`hidden lg:flex gap-10 text-lg ${
-            isDark ? "text-slate-300" : "text-slate-700"
+          className={`hidden items-center gap-9 lg:flex ${
+            isDark ? "text-slate-400" : "text-slate-600"
           }`}
         >
           <a
             href="#features"
-            className={`${isDark ? "text-white" : "text-slate-900"} hover:text-violet-500 transition`}
+            className="text-sm font-medium transition-colors hover:text-violet-500"
           >
             Features
           </a>
 
           <a
             href="#feedback"
-            className={`${isDark ? "text-white" : "text-slate-900"} hover:text-violet-500 transition`}
+            className="text-sm font-medium transition-colors hover:text-violet-500"
           >
             Feedback
           </a>
 
           <a
             href="#faq"
-            className={`${isDark ? "text-white" : "text-slate-900"} hover:text-violet-500 transition`}
+            className="text-sm font-medium transition-colors hover:text-violet-500"
           >
             FAQ
           </a>
         </div>
 
         {/* Desktop Right */}
+        <div className="hidden items-center gap-4 lg:flex">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 hover:rotate-12 ${
+              isDark
+                ? "border-slate-800 bg-slate-900/70 hover:border-violet-500/30 hover:bg-violet-500/10"
+                : "border-slate-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+            }`}
+          >
+            {isDark ? (
+              <Sun size={18} className="text-yellow-400" />
+            ) : (
+              <Moon size={18} className="text-slate-700" />
+            )}
+          </button>
 
-        <div className="hidden lg:flex items-center gap-5">
+          {/* Login */}
           <Link
             to="/login"
-            className={`${isDark ? "text-white" : "text-slate-900"} hover:text-violet-500 transition`}
+            className={`px-3 py-2 text-sm font-medium transition-colors ${
+              isDark
+                ? "text-slate-300 hover:text-white"
+                : "text-slate-700 hover:text-slate-950"
+            }`}
           >
             Login
           </Link>
 
-          <Link to="/register">
-            <button className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl transition">
-              Get Started
-            </button>
-          </Link>
-
-          <button
-            onClick={toggleTheme}
-            className="hover:rotate-180 transition duration-500"
+          {/* Get Started */}
+          <Link
+            to="/register"
+            className="group flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-600/20 transition-all duration-300 hover:bg-violet-500 hover:shadow-violet-600/30"
           >
-            {isDark ? <Sun className="text-yellow-400" /> : <Moon />}
-          </button>
+            Get Started
+          </Link>
         </div>
 
         {/* Mobile Controls */}
-
-        <div className="flex lg:hidden items-center gap-4">
-          <button onClick={toggleTheme}>
-            {isDark ? <Sun className="text-yellow-400" /> : <Moon />}
+        <div className="flex items-center gap-2 lg:hidden">
+          {/* Theme */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
+              isDark
+                ? "border-slate-800 bg-slate-900/70"
+                : "border-slate-200 bg-white"
+            }`}
+          >
+            {isDark ? (
+              <Sun size={18} className="text-yellow-400" />
+            ) : (
+              <Moon size={18} className="text-slate-700" />
+            )}
           </button>
 
-          <button onClick={() => setOpen(!open)}>
+          {/* Menu */}
+          <button
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
+              isDark
+                ? "border-slate-800 bg-slate-900/70"
+                : "border-slate-200 bg-white"
+            }`}
+          >
             {open ? (
-              <X size={28} className={isDark ? "text-white" : "text-black"} />
+              <X
+                size={21}
+                className={isDark ? "text-white" : "text-slate-900"}
+              />
             ) : (
               <Menu
-                size={28}
-                className={isDark ? "text-white" : "text-black"}
+                size={21}
+                className={isDark ? "text-white" : "text-slate-900"}
               />
             )}
           </button>
@@ -102,24 +148,23 @@ export default function Navbar({ isDark, toggleTheme }) {
       </div>
 
       {/* Mobile Menu */}
-
       {open && (
         <div
-          className={`lg:hidden px-6 py-6 border-t ${
+          className={`border-t px-5 pb-6 pt-5 lg:hidden ${
             isDark
-              ? "bg-slate-950 border-slate-800"
-              : "bg-white border-slate-200"
+              ? "border-slate-800/80 bg-[#050b1d]/95"
+              : "border-slate-200 bg-white/95"
           }`}
         >
-          <div
-            className={`flex flex-col gap-6 text-lg font-medium ${
-              isDark ? "text-white" : "text-slate-900"
-            }`}
-          >
+          <div className="flex flex-col gap-2">
             <a
               href="#features"
               onClick={() => setOpen(false)}
-              className="hover:text-violet-500 transition"
+              className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                isDark
+                  ? "text-slate-300 hover:bg-violet-500/10 hover:text-violet-400"
+                  : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
+              }`}
             >
               Features
             </a>
@@ -127,7 +172,11 @@ export default function Navbar({ isDark, toggleTheme }) {
             <a
               href="#feedback"
               onClick={() => setOpen(false)}
-              className="hover:text-violet-500 transition"
+              className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                isDark
+                  ? "text-slate-300 hover:bg-violet-500/10 hover:text-violet-400"
+                  : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
+              }`}
             >
               Feedback
             </a>
@@ -135,23 +184,40 @@ export default function Navbar({ isDark, toggleTheme }) {
             <a
               href="#faq"
               onClick={() => setOpen(false)}
-              className="hover:text-violet-500 transition"
+              className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                isDark
+                  ? "text-slate-300 hover:bg-violet-500/10 hover:text-violet-400"
+                  : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
+              }`}
             >
               FAQ
             </a>
 
+            <div
+              className={`my-2 h-px ${
+                isDark ? "bg-slate-800" : "bg-slate-200"
+              }`}
+            />
+
             <Link
               to="/login"
               onClick={() => setOpen(false)}
-              className="hover:text-violet-500 transition"
+              className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                isDark
+                  ? "text-slate-300 hover:bg-violet-500/10 hover:text-white"
+                  : "text-slate-700 hover:bg-violet-50 hover:text-slate-950"
+              }`}
             >
               Login
             </Link>
 
-            <Link to="/register" onClick={() => setOpen(false)}>
-              <button className="w-full bg-violet-600 hover:bg-violet-700 text-white py-3 rounded-xl font-semibold transition">
-                Get Started
-              </button>
+            <Link
+              to="/register"
+              onClick={() => setOpen(false)}
+              className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-600/20 transition hover:bg-violet-500"
+            >
+              Get Started
+              <ArrowRight size={16} />
             </Link>
           </div>
         </div>

@@ -47,7 +47,9 @@ export default function Login() {
 
   return (
     <AuthCard title="Welcome Back" subtitle="Your story continues here.">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Username */}
+
         <AuthInput
           icon={User}
           label="Username"
@@ -60,6 +62,8 @@ export default function Login() {
             })
           }
         />
+
+        {/* Password */}
 
         <AuthInput
           icon={Lock}
@@ -75,30 +79,51 @@ export default function Login() {
           }
         />
 
-        <div className="flex justify-end">
+        {/* Recover */}
+
+        <div className="flex justify-end -mt-1">
           <Link
             to="/update"
-            className="text-violet-400 hover:text-violet-300 text-sm"
+            className="
+              text-violet-400
+              hover:text-violet-300
+              text-sm
+              transition-colors
+            "
           >
             Recover Account
           </Link>
         </div>
 
+        {/* Login */}
+
         <AuthButton loading={loading}>Login</AuthButton>
 
-        <div className="flex items-center gap-4">
+        {/* Divider */}
+
+        <div className="flex items-center gap-4 py-1">
           <div className="flex-1 h-px bg-slate-700" />
-          <span className="text-slate-500 text-sm">OR</span>
+
+          <span className="text-slate-500 text-xs font-medium">OR</span>
+
           <div className="flex-1 h-px bg-slate-700" />
         </div>
 
+        {/* Google */}
+
         <GoogleButton onClick={handleGoogleLogin} />
 
-        <p className="text-center text-slate-400">
+        {/* Register */}
+
+        <p className="text-center text-sm text-slate-400 pt-1">
           Don't have an account?{" "}
           <Link
             to="/register"
-            className="text-violet-400 hover:text-violet-300"
+            className="
+              text-violet-400
+              hover:text-violet-300
+              transition-colors
+            "
           >
             Register
           </Link>

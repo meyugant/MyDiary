@@ -8,6 +8,7 @@ import IntroPage from "./components/MyDiary";
 import { Toaster } from "react-hot-toast";
 import Privacy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
+import About from "./pages/About";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Route path="/" element={<IntroPage />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
+      <Route path="/about" element={<About />} />
     </Routes>
   </BrowserRouter>,
 );

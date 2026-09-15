@@ -49,7 +49,9 @@ export default function Register() {
 
   return (
     <AuthCard title="Create Account" subtitle="Start preserving your memories.">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Email */}
+
         <AuthInput
           icon={Mail}
           label="Email"
@@ -62,6 +64,8 @@ export default function Register() {
             })
           }
         />
+
+        {/* Diary Username */}
 
         <AuthInput
           icon={BookUser}
@@ -76,6 +80,8 @@ export default function Register() {
           }
         />
 
+        {/* Display Name */}
+
         <AuthInput
           icon={User}
           label="Display Name"
@@ -88,6 +94,8 @@ export default function Register() {
             })
           }
         />
+
+        {/* Password */}
 
         <AuthInput
           icon={Lock}
@@ -103,19 +111,36 @@ export default function Register() {
           }
         />
 
+        {/* Create Account */}
+
         <AuthButton loading={loading}>Create Account</AuthButton>
 
-        <div className="flex items-center gap-4">
+        {/* Divider */}
+
+        <div className="flex items-center gap-4 py-1">
           <div className="flex-1 h-px bg-slate-700" />
-          <span className="text-slate-500 text-sm">OR</span>
+
+          <span className="text-slate-500 text-xs font-medium">OR</span>
+
           <div className="flex-1 h-px bg-slate-700" />
         </div>
 
+        {/* Google */}
+
         <GoogleButton onClick={handleGoogleSignup} />
 
-        <p className="text-center text-slate-400">
+        {/* Login */}
+
+        <p className="text-center text-sm text-slate-400 pt-1">
           Already have an account?{" "}
-          <Link to="/login" className="text-violet-400 hover:text-violet-300">
+          <Link
+            to="/login"
+            className="
+              text-violet-400
+              hover:text-violet-300
+              transition-colors
+            "
+          >
             Login
           </Link>
         </p>

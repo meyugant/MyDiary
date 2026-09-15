@@ -6,7 +6,7 @@ import {
   Trash2,
   Clock,
   FileText,
-  Smile,
+  Sparkles,
 } from "lucide-react";
 
 import DeleteModal from "./DeleteModal";
@@ -22,140 +22,135 @@ export default function ViewEntryPage({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
-  return (
-    <div className="min-h-screen bg-slate-950 px-4 sm:px-6 lg:px-8 py-6 md:py-12 flex justify-center">
-      <div className="w-full max-w-4xl">
-        {/* Back */}
 
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#050b1d] px-4 py-6 sm:px-6 md:py-10 lg:px-10">
+      {/* Ambient Background Glow */}
+      <div className="pointer-events-none absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-violet-600/10 blur-[120px]" />
+
+      <div className="relative mx-auto w-full max-w-[1200px]">
+        {/* Back Button */}
         <button
           onClick={goBack}
-          className="flex items-center gap-2 text-violet-400 hover:text-violet-300 mb-8 transition"
+          className="group mb-7 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft
+            size={19}
+            className="transition-transform duration-200 group-hover:-translate-x-1"
+          />
           Back to Dashboard
         </button>
 
-        {/* Card */}
+        {/* Main Entry Card */}
+        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl shadow-black/20">
+          {/* Top Glow */}
+          <div className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl" />
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-10">
-          {/* Top */}
+          <div className="relative p-6 sm:p-8 md:p-10 lg:p-12">
+            {/* Entry Header */}
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0 flex-1">
+                {/* Metadata */}
+                <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <CalendarDays size={17} className="text-violet-400" />
 
-          <div className="flex flex-col lg:flex-row lg:justify-between gap-8">
-            <div className="flex-1">
-              <div className="flex flex-wrap gap-6 text-slate-400 text-sm md:text-base">
-                <div className="flex items-center gap-2">
-                  <CalendarDays size={18} />
+                    {new Date(entry.dt).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </div>
 
-                  {new Date(entry.dt).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  <div className="flex items-center gap-2">
+                    <Hash size={17} className="text-blue-400" />
+                    Entry {entry.entry_no}
+                  </div>
+
+                  {entry.mood && (
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={17} className="text-pink-400" />
+                      {entry.mood}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <FileText size={17} className="text-emerald-400" />
+                    {wordCount} words
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock size={17} className="text-cyan-400" />
+                    {readingTime} min read
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Hash size={18} />
-                  Entry {entry.entry_no}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* <Smile size={18} /> */}
-                  {entry.mood}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <FileText size={18} />
-                  {wordCount} words
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Clock size={18} />
-                  {readingTime} min read
-                </div>
+                {/* Title */}
+                <h1 className="mt-7 break-words text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
+                  {entry.sub}
+                </h1>
               </div>
 
-              <h1 className="mt-6 text-3xl md:text-5xl font-bold text-white break-words leading-tight">
-                {entry.sub}
-              </h1>
+              {/* Like Button */}
+              <button
+                onClick={() => toggleLike(entry.id)}
+                aria-label="Toggle favorite"
+                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border transition-all duration-200 ${
+                  entry.liked
+                    ? "border-pink-500/30 bg-pink-500/10 shadow-[0_0_25px_rgba(236,72,153,0.12)]"
+                    : "border-slate-800 bg-slate-950/60 hover:border-pink-500/30 hover:bg-pink-500/10"
+                }`}
+              >
+                <Heart
+                  size={23}
+                  fill={entry.liked ? "currentColor" : "none"}
+                  className={
+                    entry.liked
+                      ? "text-pink-400"
+                      : "text-slate-400 transition-colors hover:text-pink-400"
+                  }
+                />
+              </button>
             </div>
 
-            <button
-              onClick={() => toggleLike(entry.id)}
-              className="
-                self-start
-                bg-slate-800
-                p-4
-                rounded-2xl
-                hover:bg-pink-600
-                transition
-              "
-            >
-              <Heart
-                size={22}
-                fill={entry.liked ? "currentColor" : "none"}
-                className={entry.liked ? "text-pink-500" : "text-white"}
-              />
-            </button>
-          </div>
+            {/* Divider */}
+            <div className="my-8 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent md:my-10" />
 
-          {/* Divider */}
+            {/* Entry Content */}
+            <article className="break-words whitespace-pre-wrap text-base font-light leading-8 tracking-wide text-slate-300 sm:text-lg md:text-[21px] md:leading-9">
+              <span className="first-letter:text-5xl first-letter:font-bold first-letter:text-violet-400 md:first-letter:text-6xl">
+                {entry.cont}
+              </span>
+            </article>
 
-          <div className="h-px bg-slate-800 my-8 md:my-10" />
+            {/* Bottom Divider */}
+            <div className="mt-10 h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent md:mt-12" />
 
-          {/* Content */}
+            {/* Footer */}
+            <div className="flex flex-col gap-6 pt-7 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-2 text-sm italic text-slate-500">
+                <Heart
+                  size={15}
+                  fill="currentColor"
+                  className="text-pink-500/70"
+                />
+                Preserved forever using MyDiary.
+              </div>
 
-          <article
-            className="
-              whitespace-pre-wrap
-              break-words
-              text-slate-300
-              text-lg
-              md:text-[22px]
-              leading-9
-              tracking-wide
-              font-light
-            "
-          >
-            <span className="first-letter:text-5xl first-letter:font-bold first-letter:text-violet-400">
-              {entry.cont}
-            </span>
-          </article>
-
-          {/* Divider */}
-
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent mt-10" />
-
-          {/* Footer */}
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 pt-8">
-            <p className="text-slate-500 italic text-sm md:text-base">
-              Preserved forever with ❤️ using MyDiary.
-            </p>
-
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="
-                flex
-                justify-center
-                items-center
-                gap-2
-                bg-red-600
-                hover:bg-red-700
-                px-6
-                py-3
-                rounded-xl
-                text-white
-                transition
-                w-full
-                sm:w-auto
-              "
-            >
-              <Trash2 size={18} />
-              Delete Entry
-            </button>
+              {/* Delete */}
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-6 py-3 text-sm font-medium text-red-400 transition hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-300 sm:w-auto"
+              >
+                <Trash2 size={18} />
+                Delete Entry
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Delete Modal */}
       <DeleteModal
         open={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

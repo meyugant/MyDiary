@@ -4,8 +4,6 @@ import axios from "axios";
 import ViewEntryPage from "./components/dashboard/ViewEntryPage";
 import Dashboard from "./pages/Dashboard";
 import toast from "react-hot-toast";
-import Privacy from "./pages/PrivacyPolicy";
-import Terms from "./pages/Terms";
 
 function App() {
   const [entries, setEntries] = useState([]);
@@ -65,8 +63,6 @@ function App() {
         setEntries(res);
         //setting number of entries
         setTotal(res.length);
-
-        // setLikes(likedEntries.length)
       } catch (error) {
         console.error("Error fetching diary entries:", error);
         toast.error("Failed to fetch diary entries.");

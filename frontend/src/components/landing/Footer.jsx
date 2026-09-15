@@ -97,7 +97,7 @@ export default function Footer({ isDark }) {
 
             <div className="mt-6 flex flex-col space-y-4">
               <a
-                href="#about"
+                href="/about"
                 className={`transition hover:text-violet-400 ${
                   isDark ? "text-slate-400" : "text-slate-600"
                 }`}

@@ -1,5 +1,14 @@
 import Button from "../ui/Button";
-import { ArrowRight, Play } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  ShieldCheck,
+  Cloud,
+  Sparkles,
+  BookOpen,
+  Flame,
+  Smile,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Hero({ isDark }) {
@@ -11,9 +20,14 @@ export default function Hero({ isDark }) {
         {/* Left */}
 
         <div className="text-center lg:text-left">
-          <span className="bg-violet-600/20 text-violet-400 px-4 py-2 rounded-full">
-            ✨ Your private digital journal
+          {/* Badge */}
+
+          <span className="inline-flex items-center gap-2 bg-violet-600/20 text-violet-400 px-4 py-2 rounded-full">
+            <Sparkles size={16} />
+            Your private digital journal
           </span>
+
+          {/* Heading */}
 
           <h1
             className={`mt-8 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight ${
@@ -26,6 +40,8 @@ export default function Hero({ isDark }) {
             </span>
           </h1>
 
+          {/* Description */}
+
           <p
             className={`mt-6 text-base sm:text-lg lg:text-xl leading-8 ${
               isDark ? "text-slate-400" : "text-slate-600"
@@ -35,57 +51,60 @@ export default function Hero({ isDark }) {
             memories, emotions and ideas in one beautiful place.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={() => navigate("/register")}
-                className="
-                  w-full
-                  sm:w-auto
-                  max-w-xs
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  bg-violet-600
-                  hover:bg-violet-700
-                  text-white
-                  px-8
-                  py-3
-                  rounded-xl
-                  font-semibold
-                  transition
-                "
-              >
-                <span>Start Writing</span>
-              </button>
-            </div>
+          {/* CTA */}
 
-            {/* <Button onClick={() => navigate("/learn-more")}>
-              <div className="flex items-center gap-2">
-                <Play size={18} />
-                Learn More
-              </div>
-            </Button> */}
+          <div className="mt-8 flex justify-center lg:justify-start">
+            <button
+              onClick={() => navigate("/register")}
+              className="
+                w-full
+                sm:w-auto
+                flex
+                items-center
+                justify-center
+                gap-2
+                bg-violet-600
+                hover:bg-violet-700
+                text-white
+                px-8
+                py-3
+                rounded-xl
+                font-semibold
+                transition
+              "
+            >
+              <span>Start Writing</span>
+            </button>
           </div>
 
+          {/* Trust / Highlights */}
+
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            <div>
-              <h2 className="text-4xl">🔒</h2>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-xl bg-violet-600/15 flex items-center justify-center">
+                <ShieldCheck size={24} className="text-violet-400" />
+              </div>
+
               <p className={isDark ? "text-slate-400" : "text-slate-600"}>
                 Private by Design
               </p>
             </div>
 
-            <div>
-              <h2 className="text-4xl">☁️</h2>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-xl bg-violet-600/15 flex items-center justify-center">
+                <Cloud size={24} className="text-violet-400" />
+              </div>
+
               <p className={isDark ? "text-slate-400" : "text-slate-600"}>
                 Cloud Synced
               </p>
             </div>
 
-            <div>
-              <h2 className="text-4xl">⚡</h2>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-xl bg-violet-600/15 flex items-center justify-center">
+                <Sparkles size={24} className="text-violet-400" />
+              </div>
+
               <p className={isDark ? "text-slate-400" : "text-slate-600"}>
                 Fast & Responsive
               </p>
@@ -96,7 +115,11 @@ export default function Hero({ isDark }) {
         {/* Right */}
 
         <div className="relative flex justify-center">
+          {/* Glow */}
+
           <div className="absolute w-96 h-96 bg-violet-600/20 blur-3xl rounded-full"></div>
+
+          {/* Browser Card */}
 
           <div
             className={`relative w-full max-w-[430px] rounded-3xl overflow-hidden shadow-2xl border ${
@@ -127,14 +150,17 @@ export default function Hero({ isDark }) {
 
             <div className="p-5 sm:p-8">
               <h3
-                className={`text-xl sm:text-2xl font-bold ${
+                className={`flex items-center gap-2 text-xl sm:text-2xl font-bold ${
                   isDark ? "text-white" : "text-slate-900"
                 }`}
               >
-                📖 Today's Journal
+                <BookOpen size={24} className="text-violet-400" />
+                Today's Journal
               </h3>
 
               <p className="text-slate-400 mt-2">Write. Reflect. Remember.</p>
+
+              {/* Journal Preview */}
 
               <div
                 className={`mt-8 rounded-2xl p-5 ${
@@ -156,40 +182,63 @@ export default function Hero({ isDark }) {
                 </p>
               </div>
 
+              {/* Stats */}
+
               <div className="grid grid-cols-3 gap-4 mt-8">
+                {/* Mood */}
+
                 <div
                   className={`rounded-xl p-4 text-center ${
                     isDark ? "bg-slate-800" : "bg-slate-100"
                   }`}
                 >
-                  <div className="text-xl sm:text-2xl">😊</div>
+                  <Smile size={24} className="mx-auto text-violet-400" />
 
                   <p className="text-sm text-slate-400 mt-2">Happy</p>
                 </div>
 
+                {/* Streak */}
+
                 <div
                   className={`rounded-xl p-4 text-center ${
                     isDark ? "bg-slate-800" : "bg-slate-100"
                   }`}
                 >
-                  <div className="text-xl sm:text-2xl">🔥</div>
+                  <Flame size={24} className="mx-auto text-violet-400" />
 
                   <p className="text-sm text-slate-400 mt-2">17 Days</p>
                 </div>
 
+                {/* Entries */}
+
                 <div
                   className={`rounded-xl p-4 text-center ${
                     isDark ? "bg-slate-800" : "bg-slate-100"
                   }`}
                 >
-                  <div className="text-xl sm:text-2xl">📖</div>
+                  <BookOpen size={24} className="mx-auto text-violet-400" />
 
                   <p className="text-sm text-slate-400 mt-2">184 Entries</p>
                 </div>
               </div>
 
+              {/* Continue */}
+
               <button
-                className="w-full mt-8 bg-violet-600 hover:bg-violet-700 text-white py-3 rounded-xl transition"
+                className="
+                  w-full
+                  mt-8
+                  bg-violet-600
+                  hover:bg-violet-700
+                  text-white
+                  py-3
+                  rounded-xl
+                  transition
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                "
                 onClick={() => navigate("/register")}
               >
                 Continue Writing
@@ -198,6 +247,9 @@ export default function Hero({ isDark }) {
           </div>
         </div>
       </div>
+
+      {/* Divider */}
+
       <div className="max-w-7xl mx-auto mt-24 px-4 sm:px-6 lg:px-8">
         <div className={`h-px ${isDark ? "bg-slate-800" : "bg-slate-200"}`} />
       </div>

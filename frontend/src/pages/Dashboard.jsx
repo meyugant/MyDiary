@@ -1,7 +1,6 @@
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import Welcome from "../components/dashboard/Welcome";
 import StatsCards from "../components/dashboard/StatsCards";
-import JournalEditor from "../components/dashboard/JournalEditor";
 import RecentEntries from "../components/dashboard/RecentEntries";
 import FavoritesPage from "../components/dashboard/FavouritesPage";
 import ProfilePage from "../components/dashboard/ProfilePage";
@@ -12,6 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import WritingAnalytics from "../components/dashboard/WritingAnalytics";
 import AllEntriesPage from "../components/dashboard/AllEntries";
 import CalendarPage from "../components/dashboard/CalendarPage";
+import WriteEntryPage from "../components/dashboard/WriteEntryPage";
+import { PenLine, ChevronRight } from "lucide-react";
 
 export default function Dashboard({
   activePage,
@@ -51,14 +52,20 @@ export default function Dashboard({
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 flex">
+    <div className="min-h-screen bg-[#050b1d] flex">
+      {/* Sidebar */}
+
       <DashboardSidebar
         activePage={activePage}
         setActivePage={setActivePage}
         logout={logout}
       />
 
-      <div className="flex-1 flex flex-col">
+      {/* Main Area */}
+
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Header */}
+
         <DashboardHeader
           search={search}
           setSearch={setSearch}
@@ -68,8 +75,25 @@ export default function Dashboard({
           logout={logout}
         />
 
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 pb-24 md:pb-8">
+        {/* Page Content */}
+
+        <main
+          className="
+            flex-1
+            overflow-y-auto
+            px-5
+            py-6
+            md:px-7
+            md:py-8
+            lg:px-10
+            lg:py-10
+            pb-24
+            md:pb-8
+          "
+        >
           <AnimatePresence mode="wait">
+            {/*  HOME  */}
+
             {activePage === "home" && (
               <motion.div
                 key="home"
@@ -77,32 +101,104 @@ export default function Dashboard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -25 }}
                 transition={{ duration: 0.35 }}
+                className="w-full max-w-[1400px] mx-auto"
               >
+                {/* Welcome */}
+
                 <Welcome username={username} />
 
+                {/* Stats */}
+
                 <StatsCards entries={entries} />
-                <WritingAnalytics entries={entries} />
 
-                <JournalEditor
-                  title={subject}
-                  setTitle={setSubject}
-                  text={entry}
-                  setText={setEntry}
-                  date={date}
-                  addNote={addNote}
-                  mood={mood}
-                  setMood={setMood}
-                />
+                {/* Main Dashboard */}
 
-                <RecentEntries
-                  entries={filteredEntries}
-                  deleteNote={deleteNote}
-                  toggleLike={toggleLike}
-                  viewEntry={viewEntry}
-                  setActivePage={setActivePage}
-                />
+                <div className="space-y-6">
+                  <WritingAnalytics entries={entries} />
+
+                  <RecentEntries
+                    entries={filteredEntries}
+                    deleteNote={deleteNote}
+                    toggleLike={toggleLike}
+                    viewEntry={viewEntry}
+                    setActivePage={setActivePage}
+                  />
+
+                  {/* Write Entry CTA */}
+
+                  <button
+                    onClick={() => setActivePage("WriteEntry")}
+                    className="
+                      group
+                      relative
+                      w-full
+                      overflow-hidden
+                      rounded-2xl
+                      bg-gradient-to-r
+                      from-violet-700
+                      via-purple-600
+                      to-violet-700
+                      p-5
+                      md:p-6
+                      text-left
+                      shadow-xl
+                      shadow-violet-900/20
+                      hover:-translate-y-0.5
+                      transition-all
+                      duration-300
+                    "
+                  >
+                    {/* Glow */}
+
+                    <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-white/10 blur-3xl" />
+
+                    <div className="relative flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="
+                            w-12
+                            h-12
+                            shrink-0
+                            rounded-xl
+                            bg-white/10
+                            border
+                            border-white/15
+                            flex
+                            items-center
+                            justify-center
+                          "
+                        >
+                          <PenLine size={23} className="text-white" />
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg md:text-xl font-semibold text-white">
+                            Write Today's Entry
+                          </h3>
+
+                          <p className="text-sm text-violet-100/70 mt-1">
+                            Capture your thoughts, feelings and moments.
+                          </p>
+                        </div>
+                      </div>
+
+                      <ChevronRight
+                        size={23}
+                        className="
+                          text-white/80
+                          shrink-0
+                          transition-transform
+                          duration-200
+                          group-hover:translate-x-1
+                        "
+                      />
+                    </div>
+                  </button>
+                </div>
               </motion.div>
             )}
+
+            {/*  FAVORITES  */}
 
             {activePage === "Fav" && (
               <motion.div
@@ -120,7 +216,11 @@ export default function Dashboard({
               </motion.div>
             )}
 
+            {/*  CALENDAR  */}
+
             {activePage === "Calendar" && <CalendarPage entries={entries} />}
+
+            {/*  ABOUT  */}
 
             {activePage === "About" && (
               <motion.div
@@ -133,6 +233,8 @@ export default function Dashboard({
                 <AboutPage />
               </motion.div>
             )}
+
+            {/*  ACCOUNT  */}
 
             {activePage === "Account" && (
               <motion.div
@@ -153,6 +255,8 @@ export default function Dashboard({
               </motion.div>
             )}
 
+            {/*  ALL ENTRIES  */}
+
             {activePage === "AllEntries" && (
               <AllEntriesPage
                 entries={entries}
@@ -161,6 +265,28 @@ export default function Dashboard({
                 viewEntry={viewEntry}
                 setActivePage={setActivePage}
               />
+            )}
+
+            {activePage === "WriteEntry" && (
+              <motion.div
+                key="write-entry"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.35 }}
+              >
+                <WriteEntryPage
+                  title={subject}
+                  setTitle={setSubject}
+                  text={entry}
+                  setText={setEntry}
+                  date={date}
+                  addNote={addNote}
+                  mood={mood}
+                  setMood={setMood}
+                  setActivePage={setActivePage}
+                />
+              </motion.div>
             )}
           </AnimatePresence>
         </main>
