@@ -73,19 +73,22 @@
 
     <!-- Schema.org -->
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type":"WebSite",
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "MyDiary",
+      "url": "https://mydiaryweb.com/",
+      "description": "Secure online journal for capturing memories, thoughts and emotions.",
+      "publisher": {
+        "@type": "Organization",
         "name": "MyDiary",
-        "url": "https://mydiaryweb.com",
-        "logo": "https://mydiaryweb.com/diaryLogo.png",
-        "description": "Secure online journal for capturing memories, thoughts and emotions.",
-        "potentialAction":{
-            "@type":"SearchAction",
-            "target":"https://mydiaryweb.com/?q={search_term_string}",
-            "query-input":"required name=search_term_string"
+        "url": "https://mydiaryweb.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://mydiaryweb.com/diaryLogo.png"
         }
       }
+    }
     </script>
 
     <link rel="stylesheet" href="./main.css" />
