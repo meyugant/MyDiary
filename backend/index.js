@@ -12,14 +12,14 @@ import { v4 as uuidv4 } from "uuid";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-
+env.config();
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
 const { Pool } = pg;
-env.config();
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
