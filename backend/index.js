@@ -12,14 +12,17 @@ import { v4 as uuidv4 } from "uuid";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import connectPgSimple from "connect-pg-simple";
+import serverless from "serverless-http";
+
 env.config();
-const FRONTEND_URL = process.env.FRONTEND_URL ;
+
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 const app = express();
-const port = 3000;
+// const port = 3000;
 const saltRounds = 10;
 const { Pool } = pg;
-
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -34,21 +37,17 @@ const db = new pg.Pool({
   ssl: {
     rejectUnauthorized: false,
   },
-  max: 10,
+  max: 2,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
 });
 
-try {
-  const client = await db.connect();
-  console.log("PostgreSQL connected");
-  client.release();
-} catch (err) {
-  console.error("Database connection failed:", err);
-}
+const PgSession = connectPgSimple(session);
 
-db.on("error", (err) => {
-  console.error("Unexpected PostgreSQL pool error:", err);
+const sessionStore = new PgSession({
+  pool: db,
+  tableName: "user_sessions",
+  createTableIfMissing: true,
 });
 
 const storage = new CloudinaryStorage({
@@ -73,6 +72,7 @@ app.use(
       "http://localhost:5173",
       "https://my-diary-tau.vercel.app",
       "https://mydiaryweb.com",
+      "https://my-diary-rap1jqy3a-yugants-projects.vercel.app",
     ],
     methods: "GET,POST,DELETE,PUT",
     credentials: true,
@@ -80,14 +80,18 @@ app.use(
 );
 
 const isProduction = process.env.NODE_ENV === "production";
+
+app.set("trust proxy", 1);
+
 app.use(
   session({
+    store: sessionStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     proxy: true,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      maxAge: 1000 * 60 * 60 * 24,
       sameSite: isProduction ? "none" : "lax",
       secure: isProduction,
     },
@@ -96,6 +100,17 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware to verify user authentication
+const requireAuth = (req, res, next) => {
+  if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+    return next();
+  }
+
+  return res.status(401).json({
+    error: "Not authenticated",
+  });
+};
 
 app.post("/logout", (req, res, next) => {
   req.logout((err) => {
@@ -107,26 +122,28 @@ app.post("/logout", (req, res, next) => {
   });
 });
 
-//fetch all entries to be visible to the user....
-app.get("/api/mydiary/:user_id", async (req, res) => {
-  const { user_id } = req.params;
+// Fetch diary entries belonging to the authenticated user
+app.get("/api/mydiary/:user_id", requireAuth, async (req, res) => {
   try {
     const result = await db.query(
-      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked,mood FROM diary_entries WHERE user_id=$1 ORDER BY dt DESC, id DESC",
-      [user_id],
+      `SELECT id, dt AT TIME ZONE 'UTC' AS dt,
+       sub, cont, entry_no, liked, mood
+       FROM diary_entries
+       WHERE user_id = $1
+       ORDER BY dt DESC, id DESC`,
+      [req.user.id],
     );
+
     res.json(result.rows);
   } catch (error) {
-    console.error("Error fetching data from mydiary:", error);
-    res.status(500).send("An error occurred while fetching the data.");
+    console.error("Error fetching diary entries:", error);
+    res.status(500).json({
+      error: "An error occurred while fetching diary entries.",
+    });
   }
 });
 
 app.get("/mydiary", (req, res) => {
-  console.log("Session cookie:", req.session);
-  console.log("User in req.user:", req.user);
-  console.log("Is Authenticated:", req.isAuthenticated());
-
   if (req.isAuthenticated()) {
     res.redirect(`${FRONTEND_URL}/home`);
   } else {
@@ -134,15 +151,23 @@ app.get("/mydiary", (req, res) => {
   }
 });
 
-app.get("/api/get-liked", async (req, res) => {
-  console.log("get-liked : ", req.isAuthenticated());
-  if (req.isAuthenticated()) {
+app.get("/api/get-liked", requireAuth, async (req, res) => {
+  try {
     const result = await db.query(
-      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no,liked FROM diary_entries WHERE liked=true ORDER BY dt DESC, id DESC",
+      `SELECT id, dt AT TIME ZONE 'UTC' AS dt,
+       sub, cont, entry_no, liked
+       FROM diary_entries
+       WHERE liked = true AND user_id = $1
+       ORDER BY dt DESC, id DESC`,
+      [req.user.id],
     );
+
     res.json(result.rows);
-  } else {
-    res.redirect("/login");
+  } catch (error) {
+    console.error("Error fetching liked entries:", error);
+    res.status(500).json({
+      error: "An error occurred while fetching liked entries.",
+    });
   }
 });
 
@@ -162,7 +187,6 @@ app.get(
 );
 
 app.get("/api/user", (req, res) => {
-  console.log("api/user:", req.isAuthenticated());
   if (req.isAuthenticated()) {
     res.json({
       user_id: req.user.id,
@@ -170,23 +194,35 @@ app.get("/api/user", (req, res) => {
       creation_date: req.user.created_at,
       profile_image: req.user.profile_image,
     });
-    console.log(req.user);
   } else {
     res.status(401).json({ error: "Not authenticated" });
   }
 });
 
-app.get("/api/:id", async (req, res) => {
-  const { id } = req.params;
+app.get("/api/:id", requireAuth, async (req, res) => {
   try {
+    const { id } = req.params;
+
     const result = await db.query(
-      "SELECT id, dt AT TIME ZONE 'UTC' AS dt, sub, cont, entry_no FROM diary_entries WHERE id=$1",
-      [id],
+      `SELECT id, dt AT TIME ZONE 'UTC' AS dt,
+       sub, cont, entry_no
+       FROM diary_entries
+       WHERE id = $1 AND user_id = $2`,
+      [id, req.user.id],
     );
-    res.json(result);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        error: "Diary entry not found.",
+      });
+    }
+
+    res.json(result.rows[0]);
   } catch (error) {
-    console.error("Error fetching data from mydiary:", error);
-    res.status(500).send("An error occurred while fetching the data.");
+    console.error("Error fetching diary entry:", error);
+    res.status(500).json({
+      error: "An error occurred while fetching the diary entry.",
+    });
   }
 });
 
@@ -218,63 +254,69 @@ app.post("/feedback", async (req, res) => {
   }
 });
 
-app.post("/upload-image", upload.single("image"), async (req, res) => {
-  try {
-    console.log("File received:");
-    console.log(req.file);
+app.post(
+  "/upload-image",
+  requireAuth,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          message: "No file received",
+        });
+      }
 
-    if (!req.file) {
-      return res.status(400).json({
-        message: "No file received",
+      const imageUrl = req.file.path;
+
+      await db.query("UPDATE userdata SET profile_image = $1 WHERE id = $2", [
+        imageUrl,
+        req.user.id,
+      ]);
+
+      res.json({
+        message: "Uploaded successfully",
+        path: imageUrl,
       });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json(err);
     }
+  },
+);
 
-    const imageUrl = req.file.path;
-
-    console.log("Cloudinary URL:", imageUrl);
-
-    await db.query("UPDATE userdata SET profile_image = $1 WHERE id = $2", [
-      imageUrl,
-      req.user.id,
-    ]);
-
-    res.json({
-      message: "Uploaded successfully",
-      path: imageUrl,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json(err);
-  }
-});
-
-app.post("/toggle-like", async (req, res) => {
-  console.log("toggle-like:", req.body);
+app.post("/toggle-like", requireAuth, async (req, res) => {
   const { id } = req.body;
 
-  if (!id) return res.status(400).json({ error: "entryId is required" });
+  if (!id) {
+    return res.status(400).json({
+      error: "Entry ID is required.",
+    });
+  }
 
   try {
-    const toggleQuery = `
-      UPDATE diary_entries
-      SET liked = NOT liked
-      WHERE id = $1
-      RETURNING liked;
-    `;
-
-    const result = await db.query(toggleQuery, [id]);
+    const result = await db.query(
+      `UPDATE diary_entries
+       SET liked = NOT liked
+       WHERE id = $1 AND user_id = $2
+       RETURNING liked`,
+      [id, req.user.id],
+    );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Entry not found" });
+      return res.status(404).json({
+        error: "Diary entry not found.",
+      });
     }
 
     res.status(200).json({
       success: true,
       liked: result.rows[0].liked,
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    res.status(500).json({
+      error: "Internal server error.",
+    });
   }
 });
 
@@ -301,10 +343,17 @@ app.post("/register", async (req, res, next) => {
       );
 
       const newUser = result.rows[0];
-      console.log(newUser);
+
       return res.status(200).json({
         message: "Registered",
-        user: newUser,
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          diary_name: newUser.diary_name,
+          email: newUser.email,
+          created_at: newUser.created_at,
+          profile_image: newUser.profile_image,
+        },
       });
     } catch (error) {
       console.error("Error registering user:", error);
@@ -329,7 +378,7 @@ app.post("/login", (req, res, next) => {
         console.error("Login session error:", err);
         return next(err);
       }
-      console.log("Login successful:", user.username);
+
       return res.status(200).json({
         message: "Logged in",
         user_id: user.id,
@@ -340,43 +389,50 @@ app.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-app.post("/api/submit", async (req, res) => {
-  const { user_id, dt, sub, cont, mood } = req.body;
-  console.log(req.body); // Debugging: See what the frontend is sending
+app.post("/api/submit", requireAuth, async (req, res) => {
+  const { dt, sub, cont, mood } = req.body;
 
-  if (!user_id || !dt || !sub || !cont || !mood) {
-    return res.status(400).send("All fields are required!");
+  if (!dt || !sub || !cont || !mood) {
+    return res.status(400).json({
+      error: "All fields are required!",
+    });
   }
 
   try {
     const entryId = uuidv4();
     const utcDate = new Date(dt).toISOString();
+    const userId = req.user.id;
     const liked = false;
+
     const result = await db.query(
       "SELECT COUNT(*) FROM diary_entries WHERE user_id = $1",
-      [user_id],
+      [userId],
     );
 
-    const entry_no_num = Number(result.rows[0].count) + 1;
+    const entryNo = Number(result.rows[0].count) + 1;
 
     await db.query(
-      "INSERT INTO diary_entries (id, user_id, dt, sub, cont, entry_no,liked,mood) VALUES ($1, $2, $3, $4, $5,$6,$7,$8)",
-      [entryId, user_id, utcDate, sub, cont, entry_no_num, liked, mood],
+      `INSERT INTO diary_entries
+       (id, user_id, dt, sub, cont, entry_no, liked, mood)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [entryId, userId, utcDate, sub, cont, entryNo, liked, mood],
     );
 
     res.status(201).json({
       id: entryId,
-      user_id,
-      entry_no: entry_no_num,
+      user_id: userId,
+      entry_no: entryNo,
       dt: utcDate,
       sub,
       cont,
       liked,
-      mood: mood,
+      mood,
     });
   } catch (error) {
     console.error("Error saving diary entry:", error);
-    res.status(500).send("An error occurred while saving the diary entry.");
+    res.status(500).json({
+      error: "An error occurred while saving the diary entry.",
+    });
   }
 });
 
@@ -417,15 +473,29 @@ app.post("/update/recover-password", async (req, res) => {
   }
 });
 
-app.delete("/api/delete/:id", async (req, res) => {
+app.delete("/api/delete/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
-    await db.query("DELETE FROM diary_entries WHERE id=$1", [id]);
-    res.status(200).send("Deleted sucessfully!!");
+    const result = await db.query(
+      "DELETE FROM diary_entries WHERE id = $1 AND user_id = $2 RETURNING id",
+      [id, req.user.id],
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        error: "Diary entry not found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Deleted successfully!",
+    });
   } catch (error) {
     console.error("Error deleting entry:", error);
-    res.status(500).send("An error occurred while deleting the entry.");
+    res.status(500).json({
+      error: "An error occurred while deleting the entry.",
+    });
   }
 });
 
@@ -492,10 +562,8 @@ passport.use(
             [email, "googleSignUp", profile.displayName],
           );
 
-          console.log("New user created via Google:", newUser.rows[0]);
           return cb(null, newUser.rows[0]);
         } else {
-          console.log("Existing Google user logged in:", result.rows[0]);
           return cb(null, result.rows[0]);
         }
       } catch (err) {
@@ -511,7 +579,6 @@ passport.serializeUser((user, cb) => {
 });
 
 passport.deserializeUser(async (id, cb) => {
-  console.log("Trying to deserialize user ID:", id);
   try {
     const result = await db.query("SELECT * FROM userdata WHERE id = $1", [id]);
     if (result.rows.length > 0) {
@@ -524,6 +591,5 @@ passport.deserializeUser(async (id, cb) => {
   }
 });
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server listening on port ${port}...`);
-});
+// AWS Lambda handler
+export const handler = serverless(app);
